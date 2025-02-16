@@ -1,4 +1,6 @@
 matplotlib~=3.10.0
-torch~=2.6.0
-torchvision~=0.21
-torchaudio~=2.6.0
+# install manually because it's CUDA version-specific
+# torch~=2.6.0
+# torchvision~=0.21
+# torchaudio~=2.6.0
+pycocotools~=2.0.8
