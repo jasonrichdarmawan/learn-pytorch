@@ -92,10 +92,10 @@ class UpConv3(Module):
     return y
   
 class ImageSegmentation(Module):
-  def __init__(self, kernel_size: int):
+  def __init__(self, num_classes: int, kernel_size: int):
     super().__init__()
-    self.out_channels = 3
-    self.batch_norm = BatchNorm2d(num_features=3)
+    self.num_classes = num_classes
+    self.batch_norm = BatchNorm2d(num_features=3) # 3 channels for RGB images
     self.down_conv1 = DownConv2(in_channels=3, out_channels=64, kernel_size=kernel_size)
     self.down_conv2 = DownConv2(in_channels=64, out_channels=128, kernel_size=kernel_size)
     self.down_conv3 = DownConv3(in_channels=128, out_channels=256, kernel_size=kernel_size)
@@ -106,9 +106,13 @@ class ImageSegmentation(Module):
     self.up_conv4 = UpConv3(in_channels=512, out_channels=256, kernel_size=kernel_size)
     self.up_conv3 = UpConv3(in_channels=256, out_channels=128, kernel_size=kernel_size)
     self.up_conv2 = UpConv2(in_channels=128, out_channels=64, kernel_size=kernel_size)
-    self.up_conv1 = UpConv2(in_channels=64, out_channels=self.out_channels, kernel_size=kernel_size)
+    self.up_conv1 = UpConv2(in_channels=64, out_channels=self.num_classes, kernel_size=kernel_size)
   
   def forward(self, batch: Tensor):
+    """
+    batch: Tensor of shape (batch_size, channels, height, width)
+    output: Tensor of shape (batch_size, num_classes, height, width)
+    """
     x = self.batch_norm(batch)
 
     # SegNet Encoder
