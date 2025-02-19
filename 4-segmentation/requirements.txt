@@ -7,3 +7,4 @@ torchinfo~=1.8.0
 torchmetrics~=1.6.1
 
 imageio~=2.37.0 # for visualizing images in GIF
+albumentations~=2.0.4 # for experimenting with image augmentations
