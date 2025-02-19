@@ -5,6 +5,12 @@ class DepthwiseSeparableConv2d(Module):
   def __init__(self, in_channels: int, out_channels: int, kernel_size: int,
                padding: int, bias: bool):
     super().__init__()
+    # increasing the feature count of the input (i.e. in_channels)
+    # makes the filters deeper
+    # and increasing the feature count of the output (i.e. out_channels)
+    # increases the number of filters
+    # so doubling then umber of features actually quadruples the amount of
+    # computation
     self.depthwise = Conv2d(in_channels=in_channels, out_channels=in_channels,
                             kernel_size=kernel_size, padding=padding, groups=in_channels, bias=bias)
     self.pointwise = Conv2d(in_channels=in_channels, out_channels=out_channels,
