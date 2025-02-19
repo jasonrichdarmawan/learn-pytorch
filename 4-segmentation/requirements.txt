@@ -5,3 +5,5 @@ matplotlib~=3.10.0
 # torchaudio~=2.6.0
 torchinfo~=1.8.0
 torchmetrics~=1.6.1
+
+imageio~=2.37.0 # for visualizing images in GIF
