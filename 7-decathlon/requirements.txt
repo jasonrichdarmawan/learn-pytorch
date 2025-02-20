@@ -1,0 +1,6 @@
+nibabel~=5.3.2
+matplotlib~=3.10.0
+# install manually because it's CUDA version-specific
+# torch~=2.6.0
+# torchvision~=0.21
+# torchaudio~=2.6.0
