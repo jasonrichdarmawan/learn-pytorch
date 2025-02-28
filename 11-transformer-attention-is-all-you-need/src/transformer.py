@@ -1,10 +1,15 @@
 # Reference:
-# https://www.youtube.com/watch?v=U0s0f995w14
+# 1. [PyTorch Transformer from Scratch](https://www.youtube.com/watch?v=U0s0f995w14)
+# 2. [SelfAttention vs Multi-head Self Attention](https://www.youtube.com/shorts/Muvjex0nkes)
 
 import torch
 import torch.nn as nn
 
 class SelfAttention(nn.Module):
+  """
+  This is multi-head self-attention mechanism
+  Other name: Scaled Dot Product Attention
+  """
   def __init__(self, embed_size: int, heads: int):
     """
     if we have embed_size of 256 and heads of 8, then each head will have 32 features
@@ -16,12 +21,12 @@ class SelfAttention(nn.Module):
 
     assert (self.head_dim * heads == embed_size), "Embed size needs to be divisible by heads"
 
-    self.values = nn.Linear(self.embed_size, self.embed_size, bias=False)
-    self.keys = nn.Linear(self.embed_size, self.embed_size, bias=False)
-    self.queries = nn.Linear(self.embed_size, self.embed_size, bias=False)
-    self.fc_out = nn.Linear(self.embed_size, embed_size) # fully connected layer
+    self.linear_value = nn.Linear(self.embed_size, self.embed_size, bias=False)
+    self.linear_key = nn.Linear(self.embed_size, self.embed_size, bias=False)
+    self.linear_query = nn.Linear(self.embed_size, self.embed_size, bias=False)
+    self.linear_out = nn.Linear(self.embed_size, embed_size) # fully connected layer
 
-  def forward(self, values: torch.Tensor, keys: torch.Tensor, query: torch.Tensor, 
+  def forward(self, value: torch.Tensor, key: torch.Tensor, query: torch.Tensor, 
               mask: torch.Tensor) -> torch.Tensor:
     """
     Each token is represented by a vector with shape embed_size.
@@ -45,18 +50,18 @@ class SelfAttention(nn.Module):
     Recombine: (N, seq_length, heads, head_dim) -> (N, seq_length, embed_size)
     """
     N = query.shape[0]
-    value_len, key_len, query_len = values.shape[1], keys.shape[1], query.shape[1]
+    value_len, key_len, query_len = value.shape[1], key.shape[1], query.shape[1]
 
-    values = self.values(values)
-    keys = self.keys(keys)
-    queries = self.queries(query)
+    value = self.linear_value(value)
+    key = self.linear_key(key)
+    query = self.linear_query(query)
 
     # # Split the embedding into self.heads pieces
-    values = values.view(N, value_len, self.heads, self.head_dim)
-    keys = keys.view(N, key_len, self.heads, self.head_dim)
-    queries = queries.view(N, query_len, self.heads, self.head_dim)
+    value = value.view(N, value_len, self.heads, self.head_dim)
+    key = key.view(N, key_len, self.heads, self.head_dim)
+    query = query.view(N, query_len, self.heads, self.head_dim)
 
-    energy = torch.einsum("nqhd,nkhd->nhqk", queries, keys) # sum over the head_dim
+    energy = torch.einsum("nqhd,nkhd->nhqk", query, key) # sum over the head_dim
     # energy or (QK^T)_{T\times T}
     # queries shape: (N, query_len, heads, head_dim)
     # keys shape: (N, key_len, heads, head_dim)
@@ -95,13 +100,13 @@ class SelfAttention(nn.Module):
     # - Scaling by 1/\sqrt{d} normalizes this variance back to 1
     # - This keeps the attention weights in a reasonable range regardless of embedding size
 
-    out = torch.einsum("nhql,nlhd->nqhd", attention, values).reshape(N, query_len, self.heads * self.head_dim)
+    out = torch.einsum("nhql,nlhd->nqhd", attention, value).reshape(N, query_len, self.heads * self.head_dim)
     # key_len and value_len are the same
     # attention shape: (N, heads, query_len, key_len)
     # values shape: (N, value_len, heads, head_dim)
     # after einsum shape: (N, query_len, heads, head_dim) then flatten last two dimensions
 
-    out = self.fc_out(out)
+    out = self.linear_out(out)
     return out
   
 class TransformerBlock(nn.Module):
