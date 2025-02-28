@@ -66,8 +66,6 @@ QK^T:  batch_size, sequence_length, sequence_length
 
 **QK^T is a matrix multiplication between every token in Q and every token in K. In other words, every output depends on every input.**
 
-**QK^TV is another matrix multiplication. This also, every output depends on every input.**
-
 **Suppose Linear Layer is y = WX (without bias). Then, Scaled Dot Product is W = QK^T and X = V.**
 
 Not part of the explanation, but important: QK^TV is necessary because different tokens (in QK^TV) can have the same attention weights. So, QK^T alone is not that useful. QK^TV make it useful because even the attention pattern is the same, it retrieve different information.
