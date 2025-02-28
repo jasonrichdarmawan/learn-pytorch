@@ -78,7 +78,7 @@ class SelfAttention(nn.Module):
     # - After applying softmax, this pushes the distribution toward extremely peaked values (near 0 or 1)
     # - These extremely peaked softmax values have very small gradients
     #   - This is because the gradient of the softmax function with respect to its inputs has the form:
-    #     - \frac{ \partial{\sigma(x_i)} }{ \partial{x_j} } = \text{softmax}(x)_i (\delta_{ij} - \text{softmax}(x)_j)
+    #     - \frac{ \partial{\sigma(x_i)} }{ \partial{x_j} } = \text{softmax}(x_i) (\delta_{ij} - \text{softmax}(x_j)
     #     - The gradient is small when the softmax value is close to 0 or 1
     #     - Note: \frac{ \partial{ \sigma(x_i) }{ \partial{x_j} } tells us how the softmax output changes as z_k changes.
     # - Small gradients lead to slow or unstable training

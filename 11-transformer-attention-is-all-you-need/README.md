@@ -49,3 +49,27 @@ Attention Scores:
   [17, 39,  61]   # Token 3's similarity to tokens 1,2,3
 ]
 ```
+
+# Multi-head Attention property of "every output depends on the input"
+
+regarding Linear Layer == Multi-head Attention. In other words, Multi-head attention has the same property which is "every output depends on the input", but with way less weights and computation.
+
+I found a simple way to explain it. Focus on Scaled Dot Product Attention (it's the core concept of multi head attention, multi head is just multiple scaled dot product attention).
+
+Now, suppose we have:
+Q: batch_size, sequence_length, embed_dim
+K: batch_size, sequence_length, embed_dim
+V: batch_size, sequence_length, embed_dim
+
+Then,
+QK^T:  batch_size, sequence_length, sequence_length
+
+**QK^T is a matrix multiplication between every token in Q and every token in K. In other words, every output depends on every input.**
+
+**QK^TV is another matrix multiplication. This also, every output depends on every input.**
+
+**Suppose Linear Layer is y = WX (without bias). Then, Scaled Dot Product is W = QK^T and X = V.**
+
+Not part of the explanation, but important: QK^TV is necessary because different tokens (in QK^TV) can have the same attention weights. So, QK^T alone is not that useful. QK^TV make it useful because even the attention pattern is the same, it retrieve different information.
+
+Not part of the explanation, but important: Considering QK^T is a matrix multiplication ,suppose Q and K \sim N(0,1), then QK^T \sim N(0,d). Variance d is a problem because we are using softmax, and the derivative i.e. \frac{ \partial{\sigma(x_i)} }{ \partial{x_j} } is \sigma(x_i) (\delta_{ij} - \text{softmax}(x_j) ). In other words, the gradient is small when the softmax value is close to 0 or 1. Therefore, we need to do 1/\sqrt{embed_dim} to normalize
