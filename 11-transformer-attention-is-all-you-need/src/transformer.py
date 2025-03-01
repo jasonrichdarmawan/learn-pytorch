@@ -21,9 +21,9 @@ class SelfAttention(nn.Module):
 
     assert (self.head_dim * heads == embed_size), "Embed size needs to be divisible by heads"
 
-    self.linear_value = nn.Linear(self.embed_size, self.embed_size, bias=False)
-    self.linear_key = nn.Linear(self.embed_size, self.embed_size, bias=False)
-    self.linear_query = nn.Linear(self.embed_size, self.embed_size, bias=False)
+    self.linear_value = nn.Linear(self.embed_size, self.embed_size, bias=False) # W_v^(1), ..., W_v^(h)
+    self.linear_key = nn.Linear(self.embed_size, self.embed_size, bias=False) # W_k^(1), ..., W_k^(h)
+    self.linear_query = nn.Linear(self.embed_size, self.embed_size, bias=False) # W_q^(1), ..., W_q^(h)
     self.linear_out = nn.Linear(self.embed_size, embed_size) # fully connected layer
 
   def forward(self, value: torch.Tensor, key: torch.Tensor, query: torch.Tensor, 
@@ -52,7 +52,7 @@ class SelfAttention(nn.Module):
     N = query.shape[0]
     value_len, key_len, query_len = value.shape[1], key.shape[1], query.shape[1]
 
-    value = self.linear_value(value)
+    value = self.linear_value(value) # shape: (N, value_len, embed_size)
     key = self.linear_key(key)
     query = self.linear_query(query)
 
