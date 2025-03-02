@@ -1,6 +1,24 @@
 # Reference:
 # 1. [PyTorch Transformer from Scratch](https://www.youtube.com/watch?v=U0s0f995w14)
 # 2. [SelfAttention vs Multi-head Self Attention](https://www.youtube.com/shorts/Muvjex0nkes)
+# 3. [Self Attention vs Cross Attention](https://www.youtube.com/watch?v=mmzRYGCfTzc)
+# 4. [Cross Attention](https://www.youtube.com/watch?v=aw3H-wPuRcw)
+
+# Cross Attention:
+# - The most common implementation is:
+#   - Query comes from the target modality (the one you want to condition or align)
+#     - The modality that "asks questions"
+#   - Key and Value come from the source modality (the one providing context)
+#     - The modality that "answers"
+# - Query have different dimensions than Key and Value
+#   - The Linear Layers in the attention mechanism ensure that the last dimension match
+# - For text-to-image generation (liek in Stable Diffusion):
+#   - X: Text features serves as Key and Value
+#   - Y: Image features serves as Query
+#   - This allows the image features to "attend to" or "look up" the relevant parts of the text description. The text is conditioning the image generation.
+# - For image-to-text tasks (like image captioning)
+#   - X: Image features serve as Key and Value
+#   - Y: Text features serve as Query
 
 import torch
 import torch.nn as nn
@@ -144,7 +162,7 @@ class TransformerBlock(nn.Module):
       ----------|
     """
     attention = self.attention(value, key, query, mask)
-    x = self.dropout(self.norm1(attention + query))
+    x = self.dropout(self.norm1(attention + query)) # skip connections
     forward = self.feed_forward(x)
     out = self.dropout(self.norm2(forward + x))
     return out
