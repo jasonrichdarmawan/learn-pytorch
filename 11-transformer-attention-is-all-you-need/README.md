@@ -1,3 +1,9 @@
+# Note
+
+Position Embedding can be precomputed (use `sin`, `cos`). This example use `nn.Embedding`.
+
+# QKV
+
 - The query $Q$ might represent the "question" you're asking about the word (e.g., how relevant is this word to the context?).
 - The key $K$ might represent the "context" or "information" available from that word.
 
