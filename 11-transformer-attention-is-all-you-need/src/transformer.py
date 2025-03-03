@@ -11,14 +11,17 @@
 #   - Key and Value come from the source modality (the one providing context)
 #     - The modality that "answers"
 # - Query have different dimensions than Key and Value
-#   - The Linear Layers in the attention mechanism ensure that the last dimension match
+#   - The W_q (a Linear Layer) will make sure the Query length (which may have different length) match the Key Length and Value Length.
 # - For text-to-image generation (liek in Stable Diffusion):
-#   - X: Text features serves as Key and Value
-#   - Y: Image features serves as Query
+#   - Image features serves as Query
+#   - Text features serves as Key and Value
 #   - This allows the image features to "attend to" or "look up" the relevant parts of the text description. The text is conditioning the image generation.
 # - For image-to-text tasks (like image captioning)
-#   - X: Image features serve as Key and Value
-#   - Y: Text features serve as Query
+#   - Text features serve as Query
+#   - Image features serve as Key and Value
+# - For text-to-text translation tasks
+#   - The target text serves as Query
+#   - The source text serves as Key and Value
 
 import torch
 import torch.nn as nn
@@ -217,7 +220,7 @@ class DecoderBlock(nn.Module):
     # value and key are the encoder output
     # querying the encoder's output (keys and values) to gather relevant information
     # the naming reflects its role in the next attention mechanism
-    out = self.transformer_block(value, key, query, src_mask) # Cross-Attention (attends to encoder output) + FFN (processes each position individually)
+    out = self.transformer_block(value, key, query, src_mask) # Self-Attention (attends to encoder output) + FFN (processes each position individually)
     return out
   
 class Decoder(nn.Module):
