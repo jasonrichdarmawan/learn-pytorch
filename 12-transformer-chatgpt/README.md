@@ -1,3 +1,10 @@
+# Encoder-Decoder, Encoder-Only, Decoder-Only
+
+Transfromer has 3 versions:
+1. Encoder-Decoder transformer, used in text-to-text (like translating text), text-to-image (like image generation), image-to-text (like image captioning).
+2. Encoder-Only transformer, used in generating context-aware embeddings (For example, the user inputs `The pizza came out of the oven and it tasted good!` because the transformer use Self-Attention instead of Masked Self-Attention, the transformer can correctly associate the token `it` with the token `pizza` instead of with the token `oven`). This context-aware embeddings can help cluster similar sentences or even similar documents.
+3. Decoder-Only transformer, used in text-to-text (like predicting the next token. For example, the user inputs `what is statquest`, the GPT will respond `awesome`).
+
 # QKV
 
 For example, `What is StatQuest`
