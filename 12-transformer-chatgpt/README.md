@@ -1,3 +1,42 @@
+# Tokenizer
+
+1. [Tokenization](https://www.youtube.com/watch?v=fNxaJsNG3-s)
+2. [Turning sentences into data](https://www.youtube.com/watch?v=r9QjkdSJZ2g)
+3. [TOkenizers](https://www.youtube.com/watch?v=hL4ZnAWSyuU)
+
+## Out of vocabulary problem
+
+train_data = "I love my dog"
+test_data = "I really love my dog"
+
+test_data_tokenized = "I", "love", "my", "dog" (in numbers)
+
+Solution? Add `<OOV>` to represent out of vocabulary / never seen token. This helps maintain the sequence length to be the same length as the sentence.
+
+test_datA_tokenzed = "I", "<OOV>", my, "dog"
+
+## Different sentence length problem.
+
+sentences = [
+    "I love my dog",
+    "Do you think my dog is amazing?"
+]
+
+Solution? Add padding (in number, it's `0`) 
+
+train_data_tokenized = [
+    [ "I", "love",    "my", "dog", "pad", "pad",     "pad"],
+    ["Do",  "you", "think",  "my", "dog",  "is", "amazing"]
+]
+
+# GPU Resources problem
+
+1. [1.58bit](https://www.youtube.com/watch?v=wCDGiys-nLA)
+
+# Hallucination problem
+
+1. [Chain-of-Verification (COVE) method](https://www.youtube.com/watch?v=Lar3K2gN454)
+
 # Encoder-Decoder, Encoder-Only, Decoder-Only
 
 Transfromer has 3 versions:
