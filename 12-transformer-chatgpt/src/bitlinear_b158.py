@@ -46,10 +46,9 @@ class BitLinearb158(nn.Module):
     $\text{LN}(x) = \frac{ x - E(x) }{ \sqrt{\text{Var}(x) + \epsilon} }$
     $\beta = \frac{1}{nm} ||W||_1$
     """
-    w_gamma = self.weight.abs().mean()
+    beta = w_gamma = self.weight.abs().mean()
     tilde_w = torch.clip(torch.round(self.weight / (w_gamma + self.epsilon)), -1, 1)
 
-    beta = self.weight.abs().mean()
     x_gamma = x.abs().max()
     tilde_x = self.quant(x=self.ln(x), gamma=x_gamma) * ( ( beta * x_gamma ) / self.q_b )
     y = tilde_x.matmul(tilde_w.T)
