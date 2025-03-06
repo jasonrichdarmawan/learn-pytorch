@@ -3,9 +3,11 @@ import torch
 import torch.nn as nn
 from torch.nn import init
 
-class BitLinear(nn.Module):
+class BitLinearb158(nn.Module):
   """
   BitNet: Scaling 1-bit Transformers for Large Language Models
+
+  The Era of 1-bit LLMs: All Large Language Models are in 1.58 Bits
 
   Disclaimer:
     Maybe the implementation is not correct.
@@ -32,28 +34,23 @@ class BitLinear(nn.Module):
     $\tilde{x} = \text{Quant}(x) = \text{Clip}(x \times \frac{Q_b}{\gamma}, -Q_b + \epsilon, Q_b - \epsilon)$
     $\text{Clip}(x,a,b) = \max(a, \min(b,x))$
     $\gamma = ||x||_\infty$
-
-    $\tilde{x} = \text{Quant}(x) = \text{Clip}((x - \eta) \times \frac{Q_b}{\gamma},\epsilon,Q_b - \epsilon)$
-    $$\eta = \min_{ij} x_{ij}$$
     """
-    eta = x.min()
-    return torch.clip(( x - eta ) * self.q_b / gamma, self.epsilon, self.q_b - self.epsilon)
+    return torch.clip(x * self.q_b / gamma, -self.q_b + self.epsilon, self.q_b - self.epsilon)
   
   def forward(self, x: torch.Tensor) -> torch.Tensor:
     """
-    $\tilde{W} = Sign(W - \alpha)$
-    $$\text{Sign}(W_{ij}) = \begin{cases} 1 & \text{if } W_{ij} \geq 0 \\ 
-                                         -1 & \text{if } W_{ij} \leq 0 \end{cases}$$
-    $\alpha = \frac{1}{nm} \sum_{ij} W_{ij}$
+    $\tilde{W} = \text{RoundClip(\frac{W / \gamma + \epsilon}, -1, 1)}$
+    $\text{RoundClip}(x,a,b) = max(a, min(b, round(x)))$
 
     $y = \tilde{W}\tilde{x} = \tilde{W} \, \text{Quant}(\text{LN}(x)) \times \frac{\beta\gamma}{Q_b}$
     $\text{LN}(x) = \frac{ x - E(x) }{ \sqrt{\text{Var}(x) + \epsilon} }$
     $\beta = \frac{1}{nm} ||W||_1$
     """
-    tilde_w = torch.sign(self.weight - self.weight.mean())
+    w_gamma = self.weight.abs().mean()
+    tilde_w = torch.clip(torch.round(self.weight / (w_gamma + self.epsilon)), -1, 1)
 
     beta = self.weight.abs().mean()
-    gamma = x.abs().max()
-    tilde_x = self.quant(x=self.ln(x), gamma=gamma) * ( ( beta * gamma ) / self.q_b )
+    x_gamma = x.abs().max()
+    tilde_x = self.quant(x=self.ln(x), gamma=x_gamma) * ( ( beta * x_gamma ) / self.q_b )
     y = tilde_x.matmul(tilde_w.T)
     return y
