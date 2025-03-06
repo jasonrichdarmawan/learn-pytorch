@@ -51,7 +51,7 @@ class BitLinearb158(nn.Module):
 
     if not self.training:
       # the quantization is performed per token during inference
-      x_gamma = x.abs().mean(dim=-1, keepdim=True)
+      x_gamma = x.abs().max(dim=-1, keepdim=True)
       tilde_x = self.quant(x=self.ln(x), gamma=x_gamma)
     else:
       # the quantization is performed per tensor during training

@@ -60,7 +60,7 @@ class BitLinear(nn.Module):
     beta = self.weight.abs().mean()
     if not self.training:
       # the quantization is performed per token during inference
-      gamma = x.abs().mean(dim=-1, keepdim=True)
+      gamma = x.abs().max(dim=-1, keepdim=True)
     else:
       # the quantization is performed per tensor during inference
       gamma = x.abs().max(dim=1, keepdim=True).values
