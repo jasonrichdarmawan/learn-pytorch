@@ -6,8 +6,11 @@ from torch.nn import init
 class BitLinear(nn.Module):
   """
   BitNet: Scaling 1-bit Transformers for Large Language Models
+
+  Disclaimer:
+    Maybe the implementation is not correct.
   """
-  def __init__(self, in_features: int, out_features: int, bias=False, b: int = 2, epsilon: float = 1e-5) -> None:
+  def __init__(self, in_features: int, out_features: int, bias=False, b: int = 8, epsilon: float = 1e-5) -> None:
     super().__init__()
 
     self.weight = nn.Parameter(torch.empty(out_features, in_features))
