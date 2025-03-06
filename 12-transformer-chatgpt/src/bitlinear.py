@@ -36,7 +36,12 @@ class BitLinear(nn.Module):
     $\tilde{x} = \text{Quant}(x) = \text{Clip}((x - \eta) \times \frac{Q_b}{\gamma},\epsilon,Q_b - \epsilon)$
     $$\eta = \min_{ij} x_{ij}$$
     """
-    eta = x.min()
+    if not self.training:
+      # the quantization is performed per token during inference
+      eta = x.min(dim=-1, keepdim=True).values
+    else:
+      # the quantization is performed per tensor during training
+      eta = x.min(dim=1, keepdim=True).values
     return torch.clip(( x - eta ) * self.q_b / gamma, self.epsilon, self.q_b - self.epsilon)
   
   def forward(self, x: torch.Tensor) -> torch.Tensor:
@@ -53,7 +58,12 @@ class BitLinear(nn.Module):
     tilde_w = torch.sign(self.weight - self.weight.mean())
 
     beta = self.weight.abs().mean()
-    gamma = x.abs().max()
+    if not self.training:
+      # the quantization is performed per token during inference
+      gamma = x.abs().mean(dim=-1, keepdim=True)
+    else:
+      # the quantization is performed per tensor during inference
+      gamma = x.abs().max(dim=1, keepdim=True).values
     tilde_x = self.quant(x=self.ln(x), gamma=gamma) * ( ( beta * gamma ) / self.q_b )
     y = tilde_x.matmul(tilde_w.T)
     return y

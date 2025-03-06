@@ -49,7 +49,13 @@ class BitLinearb158(nn.Module):
     beta = w_gamma = self.weight.abs().mean()
     tilde_w = torch.clip(torch.round(self.weight / (w_gamma + self.epsilon)), -1, 1)
 
-    x_gamma = x.abs().max()
-    tilde_x = self.quant(x=self.ln(x), gamma=x_gamma) * ( ( beta * x_gamma ) / self.q_b )
+    if not self.training:
+      # the quantization is performed per token during inference
+      x_gamma = x.abs().mean(dim=-1, keepdim=True)
+      tilde_x = self.quant(x=self.ln(x), gamma=x_gamma)
+    else:
+      # the quantization is performed per tensor during training
+      x_gamma = x.abs().max(dim=1, keepdim=True).values
+      tilde_x = self.quant(x=self.ln(x), gamma=x_gamma) * ( ( beta * x_gamma ) / self.q_b )
     y = tilde_x.matmul(tilde_w.T)
     return y

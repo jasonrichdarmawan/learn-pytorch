@@ -156,7 +156,7 @@ class DecoderOnlyTransformer(L.LightningModule):
     return fc_layer_output
   
   def configure_optimizers(self):
-    return Adam(self.parameters(), lr=0.1)
+    return Adam(self.parameters(), lr=1e-1)
   
   def training_step(self, batch: torch.utils.data.DataLoader, batch_idx: int):
     """
