@@ -1,3 +1,10 @@
+# Note
+
+1. `main.ipynb` is not trained on the laptop. The model was trained on a computer with NVIDIA RTX 3090.
+2. The computer took 34.5 minutes just to train for 5000 iterations + output 300 tokens.
+3. The computer took 8 minutes just to output 10,000 tokens. See `more.txt` to check the output.
+4. Mind you, the `input.txt` is only 1 million characters (and because we use character as token, then it's 1 million tokens) / 300k tokens (by tokenizer standard used by GPT-3 which have 50,000 vocabulary and trained on 300 billions tokens). See the "Language Models are Few-Shot Learners" paper.
+
 # Reference:
 
 1. [Transformer](https://www.youtube.com/watch?v=kCc8FmEb1nY)
