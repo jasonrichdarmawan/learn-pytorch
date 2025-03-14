@@ -254,7 +254,7 @@ class GPT(nn.Module):
           sd[k].copy_(sd_hf[k])
     return model
   
-  def configure_optimizers(self, weight_decay: float, learning_rate: float, device_type: str) -> torch.optim.AdamW:
+  def configure_optimizers(self, weight_decay: float, learning_rate: float, device: str) -> torch.optim.AdamW:
     # start with all of the candidate parameters (that require grad)
     param_dict = {pn: p for pn, p in self.named_parameters()}
     param_dict = {pn: p for pn, p in param_dict.items() if p.requires_grad}
@@ -274,7 +274,7 @@ class GPT(nn.Module):
     # prev: 93ms, 176k tokens per second
     # now: 90ms, 182k tokens per second
     fused_available = 'fused' in inspect.signature(torch.optim.AdamW).parameters
-    use_fused = fused_available and device_type == "cuda"
+    use_fused = fused_available and 'cuda' in device
     print(f"using fused AdamW: {use_fused}")
     optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-8, fused=use_fused)
     return optimizer
@@ -461,7 +461,7 @@ for step in range(max_steps):
   t1 = time.time()
   dt = (t1 - t0) * 1000 # time difference in milliseconds 
   tokens_per_sec = (train_loader.B * train_loader.T) / (t1 - t0)
-  print(f"step {i} | loss: {loss.item()} | lr: {lr:.4e} | norm: {norm:.4f } | dt: {dt:.2f}ms | tok/sec: {tokens_per_sec:.2f}")
+  print(f"step {step} | loss: {loss.item()} | lr: {lr:.4e} | norm: {norm:.4f } | dt: {dt:.2f}ms | tok/sec: {tokens_per_sec:.2f}")
 
 # lesson 1:
 # try to get random x and y and do forward pass, then print the loss
