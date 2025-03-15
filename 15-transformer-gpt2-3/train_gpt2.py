@@ -772,9 +772,9 @@ for step in range(max_steps):
       with open(log_file, "a") as f:
         f.write(f"{step} hella {acc_norm:.4f}\n")
   
-    # once in a while generate from the model (except step 0, which is noise)
-    # disabled because torch.compile throws a scary error i can't solve rn
-    # if you dsiale torch.compile, this code works fine
+  # once in a while generate from the model (except step 0, which is noise)
+  # disabled because torch.compile throws a scary error i can't solve rn
+  # if you dsiale torch.compile, this code works fine
   if (step > 0 and step % 250 == 0) or last_step:
     model.eval()
     num_return_sequences = 4
