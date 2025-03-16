@@ -301,11 +301,10 @@ class GPT(nn.Module):
 # --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- --- ---
 import tiktoken
 import numpy as np
-import numpy.typing as npt
 
 def load_tokens(filename: str) -> torch.Tensor:
   arr = np.load(filename)
-  arr = npt.astype(np.int32)
+  arr = arr.astype(np.int32)
   # earlier version of PyTorch may have difficulty converting from uint16 to long. Inside `load_tokens`, we added
   # `npt = npt.astype(np.int32)` to use numpy to convert uint16 to int32 before converting to torch tensor and then covnerting to long
   ptt = torch.tensor(arr, dtype=torch.long)
