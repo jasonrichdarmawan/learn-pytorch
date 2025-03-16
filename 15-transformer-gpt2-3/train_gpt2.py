@@ -305,7 +305,7 @@ import numpy.typing as npt
 
 def load_tokens(filename: str) -> torch.Tensor:
   arr = np.load(filename)
-  npt = npt.astype(np.int32)
+  arr = npt.astype(np.int32)
   # earlier version of PyTorch may have difficulty converting from uint16 to long. Inside `load_tokens`, we added
   # `npt = npt.astype(np.int32)` to use numpy to convert uint16 to int32 before converting to torch tensor and then covnerting to long
   ptt = torch.tensor(arr, dtype=torch.long)
@@ -926,10 +926,10 @@ for step in range(max_steps):
   # and then we can actually take the time.
   t1 = time.time()
   dt = t1 - t0 # time difference in seconds 
-  tokens_processed = train_loader * train_loader.T * grad_accum_steps * ddp_world_size
+  tokens_processed = train_loader.B * train_loader.T * grad_accum_steps * ddp_world_size
   tokens_per_sec = tokens_processed / dt
   if master_process:
-    print(f"step {step} | loss: {loss_accum.item():.6f} | lr: {lr:.4e} | norm: {norm:.4f } | dt: {dt:.2f}s | tok/sec: {tokens_per_sec:.2f}")
+    print(f"step {step} | loss: {loss_accum.item():.6f} | lr: {lr:.4e} | norm: {norm:.4f} | dt: {dt:.2f}s | tok/sec: {tokens_per_sec:.2f}")
     with open(log_file, "a") as f:
       f.write(f"{step} train {loss_accum.item():.6f}\n")
 
