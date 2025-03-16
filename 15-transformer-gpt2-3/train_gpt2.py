@@ -480,10 +480,10 @@ if torch.cuda.is_available():
 
 enc = tiktoken.get_encoding("gpt2")
 
-total_batch_size= 4096 # 2**19, ~0.5M, in number of tokens
+total_batch_size= 524288 # 2**19, ~0.5M, in number of tokens
 # see "Language Models are Few-Shot Learners" paper
 # GPT-3 Small batch size is 0.5M tokens
-B = 4 # micro batch size
+B = 64 # micro batch size
 # lesson 1:
 # 64*1024*8 = 524,288 tokens
 # if this fits, so that means we would not even be doing gradient accumulation if this ffits
