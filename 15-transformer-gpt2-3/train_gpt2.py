@@ -480,10 +480,10 @@ if torch.cuda.is_available():
 
 enc = tiktoken.get_encoding("gpt2")
 
-total_batch_size= 524288 # 2**19, ~0.5M, in number of tokens
+total_batch_size= 4096 # 2**19, ~0.5M, in number of tokens
 # see "Language Models are Few-Shot Learners" paper
 # GPT-3 Small batch size is 0.5M tokens
-B = 64 # micro batch size
+B = 4 # micro batch size
 # lesson 1:
 # 64*1024*8 = 524,288 tokens
 # if this fits, so that means we would not even be doing gradient accumulation if this ffits
@@ -678,7 +678,7 @@ for step in range(max_steps):
   # right now, we are just doing a single epoch, but if we get to a point where we want to train on 10 epochs or something like that
   # we would be really careful with maybe we are memorizing that data too much if we have big enough model
   # and our validation splits would be one way to tell whether that is happening
-  if step % 250 == 0 or last_step:
+  if (step % 250 == 0 or last_step):
     model.eval()
     val_loader.reset()
     with torch.no_grad():
@@ -687,7 +687,7 @@ for step in range(max_steps):
       for _ in range(val_loss_steps):
         x, y = val_loader.next_batch()
         x, y = x.to(device), y.to(device)
-        with torch.autocast(device_type=device, dtype=torch.bfloat16):
+        with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
           logits, loss = model(x, y)
         loss = loss / val_loss_steps
         val_loss_accum += loss.detach()
@@ -732,7 +732,7 @@ for step in range(max_steps):
         torch.save(checkpoint, checkpoint_path)
   
   # evaluate hellaswag
-  if (step % 250 == 0 or last_step) and (not use_compile):
+  if (step % 250 == 0 or last_step):
     num_correct_norm = 0
     num_total = 0
     for i, example in enumerate(iterate_examples("val")):
@@ -741,16 +741,17 @@ for step in range(max_steps):
         continue
       # render the example into tokens and labels
       _, tokens, mask, label = render_example(example)
-      tokens = tokens.to(device)
-      mask = mask.to(device)
 
       pad_x_to = (T if use_compile else tokens.size(1)) - tokens.size(1)
       tokens = torch.cat((tokens, torch.zeros([tokens.size(0), pad_x_to], dtype=torch.long)), dim=1)
       mask = torch.cat((mask, torch.zeros([mask.size(0), pad_x_to], dtype=torch.long)), dim=1)
+    
+      tokens = tokens.to(device)
+      mask = mask.to(device)
 
       # get the logits
       with torch.no_grad():
-        with torch.autocast(device_type=device, dtype=torch.bfloat16):
+        with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
           logits, loss = model(tokens)
         pred_norm = get_most_likely_row(tokens, mask, logits)
         # get the most likely option with the lowest loss
@@ -846,7 +847,7 @@ for step in range(max_steps):
       # we want to synchronize the gradients only at the last step
       # confusingly, `model.require_backward_grad_sync` is actually used by both the forward and backward pass.
       # moved up the line so that it also gets applied to the forward pass.
-    with torch.autocast(device_type=device, dtype=torch.bfloat16):
+    with torch.autocast(device_type=device_type, dtype=torch.bfloat16):
       logits, loss = model(x, y)
       # pytorch automatic mixed precision
       # some things pytorch is keeping in float32
