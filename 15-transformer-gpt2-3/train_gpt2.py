@@ -57,7 +57,8 @@ class CausalSelfAttention(nn.Module):
     # now: 96ms, 169k tokens per second
     y = F.scaled_dot_product_attention(q, k, v, is_causal=True)
 
-    y = y.transpose(1,2).contiguous().view(B, T, C) 
+    y = y.transpose(1,2).contiguous().view(B, T, C)
+    # or y.transpose(1,2).flatten(-2)
     # re-assemble all head outputs side by side
     # (B, nh, T, hs) -> (B, T, nh, hs) -> (B, T, nh * hs)
     # output projection
