@@ -1,0 +1,16 @@
+{"time":"2025-03-31T20:40:54.281359+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"/Users/jason/Documents/01 西北工业大学/02 图像课题组（ICLab）/08 Code/02-learn-pytorch/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/wandb/run-20250331_204054-luhowfbs/logs/debug-core.log"}
+{"time":"2025-03-31T20:40:54.39947+08:00","level":"INFO","msg":"created new stream","id":"luhowfbs"}
+{"time":"2025-03-31T20:40:54.399538+08:00","level":"INFO","msg":"stream: started","id":"luhowfbs"}
+{"time":"2025-03-31T20:40:54.399564+08:00","level":"INFO","msg":"handler: started","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:40:54.399705+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:40:54.39972+08:00","level":"INFO","msg":"sender: started","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:40:55.636882+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2025-03-31T20:52:02.104564+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2025-03-31T20:52:02.107376+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2025-03-31T20:52:03.11598+08:00","level":"INFO","msg":"handler: operation stats","stats":{"operations":[{"desc":"uploading output.log","runtime_seconds":0.231966292},{"desc":"uploading wandb-summary.json","runtime_seconds":0.230801375},{"desc":"uploading config.yaml","runtime_seconds":0.074431792}],"total_operations":3}}
+{"time":"2025-03-31T20:52:08.97951+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2025-03-31T20:52:09.877028+08:00","level":"INFO","msg":"stream: closing","id":"luhowfbs"}
+{"time":"2025-03-31T20:52:09.877108+08:00","level":"INFO","msg":"handler: closed","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:52:09.87711+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:52:09.877374+08:00","level":"INFO","msg":"sender: closed","stream_id":"luhowfbs"}
+{"time":"2025-03-31T20:52:09.877532+08:00","level":"INFO","msg":"stream: closed","id":"luhowfbs"}

@@ -1,0 +1,926 @@
+Loaded pretrained model gpt2-small into HookedTransformer
+[('!', 0), ('"', 1), ('#', 2), ('$', 3), ('%', 4), ('&', 5), ("'", 6), ('(', 7), (')', 8), ('*', 9), ('+', 10), (',', 11), ('-', 12), ('.', 13), ('/', 14), ('0', 15), ('1', 16), ('2', 17), ('3', 18), ('4', 19)]
+
+[('ľ', 250), ('Ŀ', 251), ('ŀ', 252), ('Ł', 253), ('ł', 254), ('Ń', 255), ('Ġt', 256), ('Ġa', 257), ('he', 258), ('in', 259), ('re', 260), ('on', 261), ('Ġthe', 262), ('er', 263), ('Ġs', 264), ('at', 265), ('Ġw', 266), ('Ġo', 267), ('en', 268), ('Ġc', 269)]
+
+[('Ġprodu', 990), ('Ġstill', 991), ('led', 992), ('ah', 993), ('Ġhere', 994), ('Ġworld', 995), ('Ġthough', 996), ('Ġnum', 997), ('arch', 998), ('imes', 999), ('ale', 1000), ('ĠSe', 1001), ('ĠIf', 1002), ('//', 1003), ('ĠLe', 1004), ('Ġret', 1005), ('Ġref', 1006), ('Ġtrans', 1007), ('ner', 1008), ('ution', 1009)]
+
+[('Revolution', 50237), ('Ġsnipers', 50238), ('Ġreverted', 50239), ('Ġconglomerate', 50240), ('Terry', 50241), ('794', 50242), ('Ġharsher', 50243), ('Ġdesolate', 50244), ('ĠHitman', 50245), ('Commission', 50246), ('Ġ(/', 50247), ('âĢ¦."', 50248), ('Compar', 50249), ('Ġamplification', 50250), ('ominated', 50251), ('Ġregress', 50252), ('ĠCollider', 50253), ('Ġinformants', 50254), ('Ġgazed', 50255), ('<|endoftext|>', 50256)]
+['<|endoftext|>', 'R', 'alph']
+['<|endoftext|>', ' Ralph']
+['<|endoftext|>', ' r', 'alph']
+['<|endoftext|>', 'ral', 'ph']
+['<|endoftext|>', '568', '73', '+', '318', '46', '23', '=', '123', '45', '67', '89', '-', '1', '000000', '000']
+Loaded pretrained model gpt2-small into HookedTransformer
+tensor([[50256,    40,   716,   281,  4998,  1960,   382, 19741,    11,   875,
+         12342,    12,  8807,    11,   402, 11571,    12,    17,  3918, 47385,
+            13,  1881,  1110,   314,   481,  7074,  1692,  1241,  4430,   290,
+          1011,   625,   262,   995,     0]], device='mps:0')
+torch.Size([1, 35])
+['<|endoftext|>', 'I', ' am', ' an', ' amazing', ' aut', 'ore', 'gressive', ',', ' dec', 'oder', '-', 'only', ',', ' G', 'PT', '-', '2', ' style', ' transformer', '.', ' One', ' day', ' I', ' will', ' exceed', ' human', ' level', ' intelligence', ' and', ' take', ' over', ' the', ' world', '!']
+[('!', 0), ('"', 1), ('#', 2), ('$', 3), ('%', 4), ('&', 5), ("'", 6), ('(', 7), (')', 8), ('*', 9), ('+', 10), (',', 11), ('-', 12), ('.', 13), ('/', 14), ('0', 15), ('1', 16), ('2', 17), ('3', 18), ('4', 19)]
+
+[('ľ', 250), ('Ŀ', 251), ('ŀ', 252), ('Ł', 253), ('ł', 254), ('Ń', 255), ('Ġt', 256), ('Ġa', 257), ('he', 258), ('in', 259), ('re', 260), ('on', 261), ('Ġthe', 262), ('er', 263), ('Ġs', 264), ('at', 265), ('Ġw', 266), ('Ġo', 267), ('en', 268), ('Ġc', 269)]
+
+[('Ġprodu', 990), ('Ġstill', 991), ('led', 992), ('ah', 993), ('Ġhere', 994), ('Ġworld', 995), ('Ġthough', 996), ('Ġnum', 997), ('arch', 998), ('imes', 999), ('ale', 1000), ('ĠSe', 1001), ('ĠIf', 1002), ('//', 1003), ('ĠLe', 1004), ('Ġret', 1005), ('Ġref', 1006), ('Ġtrans', 1007), ('ner', 1008), ('ution', 1009)]
+
+[('Revolution', 50237), ('Ġsnipers', 50238), ('Ġreverted', 50239), ('Ġconglomerate', 50240), ('Terry', 50241), ('794', 50242), ('Ġharsher', 50243), ('Ġdesolate', 50244), ('ĠHitman', 50245), ('Commission', 50246), ('Ġ(/', 50247), ('âĢ¦."', 50248), ('Compar', 50249), ('Ġamplification', 50250), ('ominated', 50251), ('Ġregress', 50252), ('ĠCollider', 50253), ('Ġinformants', 50254), ('Ġgazed', 50255), ('<|endoftext|>', 50256)]
+['<|endoftext|>', 'R', 'alph']
+['<|endoftext|>', ' Ralph']
+['<|endoftext|>', ' r', 'alph']
+['<|endoftext|>', 'ral', 'ph']
+['<|endoftext|>', '568', '73', '+', '318', '46', '23', '=', '123', '45', '67', '89', '-', '1', '000000', '000']
+tensor([[50256,    40,   716,   281,  4998,  1960,   382, 19741,    11,   875,
+         12342,    12,  8807,    11,   402, 11571,    12,    17,  3918, 47385,
+            13,  1881,  1110,   314,   481,  7074,  1692,  1241,  4430,   290,
+          1011,   625,   262,   995,     0]], device='mps:0')
+torch.Size([1, 35])
+['<|endoftext|>', 'I', ' am', ' an', ' amazing', ' aut', 'ore', 'gressive', ',', ' dec', 'oder', '-', 'only', ',', ' G', 'PT', '-', '2', ' style', ' transformer', '.', ' One', ' day', ' I', ' will', ' exceed', ' human', ' level', ' intelligence', ' and', ' take', ' over', ' the', ' world', '!']
+Loaded pretrained model gpt2-small into HookedTransformer
+[('!', 0), ('"', 1), ('#', 2), ('$', 3), ('%', 4), ('&', 5), ("'", 6), ('(', 7), (')', 8), ('*', 9), ('+', 10), (',', 11), ('-', 12), ('.', 13), ('/', 14), ('0', 15), ('1', 16), ('2', 17), ('3', 18), ('4', 19)]
+
+[('ľ', 250), ('Ŀ', 251), ('ŀ', 252), ('Ł', 253), ('ł', 254), ('Ń', 255), ('Ġt', 256), ('Ġa', 257), ('he', 258), ('in', 259), ('re', 260), ('on', 261), ('Ġthe', 262), ('er', 263), ('Ġs', 264), ('at', 265), ('Ġw', 266), ('Ġo', 267), ('en', 268), ('Ġc', 269)]
+
+[('Ġprodu', 990), ('Ġstill', 991), ('led', 992), ('ah', 993), ('Ġhere', 994), ('Ġworld', 995), ('Ġthough', 996), ('Ġnum', 997), ('arch', 998), ('imes', 999), ('ale', 1000), ('ĠSe', 1001), ('ĠIf', 1002), ('//', 1003), ('ĠLe', 1004), ('Ġret', 1005), ('Ġref', 1006), ('Ġtrans', 1007), ('ner', 1008), ('ution', 1009)]
+
+[('Revolution', 50237), ('Ġsnipers', 50238), ('Ġreverted', 50239), ('Ġconglomerate', 50240), ('Terry', 50241), ('794', 50242), ('Ġharsher', 50243), ('Ġdesolate', 50244), ('ĠHitman', 50245), ('Commission', 50246), ('Ġ(/', 50247), ('âĢ¦."', 50248), ('Compar', 50249), ('Ġamplification', 50250), ('ominated', 50251), ('Ġregress', 50252), ('ĠCollider', 50253), ('Ġinformants', 50254), ('Ġgazed', 50255), ('<|endoftext|>', 50256)]
+['<|endoftext|>', 'R', 'alph']
+['<|endoftext|>', ' Ralph']
+['<|endoftext|>', ' r', 'alph']
+['<|endoftext|>', 'ral', 'ph']
+['<|endoftext|>', '568', '73', '+', '318', '46', '23', '=', '123', '45', '67', '89', '-', '1', '000000', '000']
+tensor([[50256,    40,   716,   281,  4998,  1960,   382, 19741,    11,   875,
+         12342,    12,  8807,    11,   402, 11571,    12,    17,  3918, 47385,
+            13,  1881,  1110,   314,   481,  7074,  1692,  1241,  4430,   290,
+          1011,   625,   262,   995,     0]], device='mps:0')
+torch.Size([1, 35])
+['<|endoftext|>', 'I', ' am', ' an', ' amazing', ' aut', 'ore', 'gressive', ',', ' dec', 'oder', '-', 'only', ',', ' G', 'PT', '-', '2', ' style', ' transformer', '.', ' One', ' day', ' I', ' will', ' exceed', ' human', ' level', ' intelligence', ' and', ' take', ' over', ' the', ' world', '!']
+torch.Size([1, 35, 50257])
+torch.Size([1, 35, 50257])
+torch.Size([1, 35, 50257])
+torch.Size([1, 35, 50257])
+Loaded pretrained model gpt2-small into HookedTransformer
+[('<|endoftext|>', '\n'), ('I', "'m"), (' am', ' a'), (' an', ' avid'), (' amazing', ' person'), (' aut', 'od'), ('ore', 'sp'), ('gressive', '.'), (',', ' and'), (' dec', 'ently'), ('oder', ','), ('-', 'driven'), ('only', ' programmer'), (',', ' and'), (' G', 'IM'), ('PT', '-'), ('-', 'only'), ('2', '.'), (' style', ','), (' transformer', '.'), ('.', ' I'), (' One', ' of'), (' day', ' I'), (' I', ' will'), (' will', ' be'), (' exceed', ' my'), (' human', 'ly'), (' level', ' of'), (' intelligence', ' and'), (' and', ' I'), (' take', ' over'), (' over', ' the'), (' the', ' world'), (' world', '.'), ('!', ' I')]
+[('<|endoftext|>', '\n'), ('I', "'m"), (' am', ' a'), (' an', ' avid'), (' amazing', ' person'), (' aut', 'od'), ('ore', 'sp'), ('gressive', '.'), (',', ' and'), (' dec', 'ently'), ('oder', ','), ('-', 'driven'), ('only', ' programmer'), (',', ' and'), (' G', 'IM'), ('PT', '-'), ('-', 'only'), ('2', '.'), (' style', ','), (' transformer', '.'), ('.', ' I'), (' One', ' of'), (' day', ' I'), (' I', ' will'), (' will', ' be'), (' exceed', ' my'), (' human', 'ly'), (' level', ' of'), (' intelligence', ' and'), (' and', ' I'), (' take', ' over'), (' over', ' the'), (' the', ' world'), (' world', '.'), ('!', ' I')]
+' I'
+Sequence so far: '<|endoftext|>I am an amazing autoregressive, decoder-only, GPT-2 style transformer. One day I will exceed human level intelligence and take over the world!'
+36th char = ' I'
+' I'
+Sequence so far: '<|endoftext|>I am an amazing autoregressive, decoder-only, GPT-2 style transformer. One day I will exceed human level intelligence and take over the world!'
+36th char = ' I'
+[('!', 0), ('"', 1), ('#', 2), ('$', 3), ('%', 4), ('&', 5), ("'", 6), ('(', 7), (')', 8), ('*', 9), ('+', 10), (',', 11), ('-', 12), ('.', 13), ('/', 14), ('0', 15), ('1', 16), ('2', 17), ('3', 18), ('4', 19)]
+
+[('ľ', 250), ('Ŀ', 251), ('ŀ', 252), ('Ł', 253), ('ł', 254), ('Ń', 255), ('Ġt', 256), ('Ġa', 257), ('he', 258), ('in', 259), ('re', 260), ('on', 261), ('Ġthe', 262), ('er', 263), ('Ġs', 264), ('at', 265), ('Ġw', 266), ('Ġo', 267), ('en', 268), ('Ġc', 269)]
+
+[('Ġprodu', 990), ('Ġstill', 991), ('led', 992), ('ah', 993), ('Ġhere', 994), ('Ġworld', 995), ('Ġthough', 996), ('Ġnum', 997), ('arch', 998), ('imes', 999), ('ale', 1000), ('ĠSe', 1001), ('ĠIf', 1002), ('//', 1003), ('ĠLe', 1004), ('Ġret', 1005), ('Ġref', 1006), ('Ġtrans', 1007), ('ner', 1008), ('ution', 1009)]
+
+[('Revolution', 50237), ('Ġsnipers', 50238), ('Ġreverted', 50239), ('Ġconglomerate', 50240), ('Terry', 50241), ('794', 50242), ('Ġharsher', 50243), ('Ġdesolate', 50244), ('ĠHitman', 50245), ('Commission', 50246), ('Ġ(/', 50247), ('âĢ¦."', 50248), ('Compar', 50249), ('Ġamplification', 50250), ('ominated', 50251), ('Ġregress', 50252), ('ĠCollider', 50253), ('Ġinformants', 50254), ('Ġgazed', 50255), ('<|endoftext|>', 50256)]
+['<|endoftext|>', 'R', 'alph']
+['<|endoftext|>', ' Ralph']
+['<|endoftext|>', ' r', 'alph']
+['<|endoftext|>', 'ral', 'ph']
+['<|endoftext|>', '568', '73', '+', '318', '46', '23', '=', '123', '45', '67', '89', '-', '1', '000000', '000']
+tensor([[50256,    40,   716,   281,  4998,  1960,   382, 19741,    11,   875,
+         12342,    12,  8807,    11,   402, 11571,    12,    17,  3918, 47385,
+            13,  1881,  1110,   314,   481,  7074,  1692,  1241,  4430,   290,
+          1011,   625,   262,   995,     0]], device='mps:0')
+torch.Size([1, 35])
+['<|endoftext|>', 'I', ' am', ' an', ' amazing', ' aut', 'ore', 'gressive', ',', ' dec', 'oder', '-', 'only', ',', ' G', 'PT', '-', '2', ' style', ' transformer', '.', ' One', ' day', ' I', ' will', ' exceed', ' human', ' level', ' intelligence', ' and', ' take', ' over', ' the', ' world', '!']
+torch.Size([1, 35, 50257])
+torch.Size([1, 35, 50257])
+37th char = ' am'
+37th char = ' am'
+[('<|endoftext|>', '\n'), ('I', "'m"), (' am', ' a'), (' an', ' avid'), (' amazing', ' person'), (' aut', 'od'), ('ore', 'sp'), ('gressive', '.'), (',', ' and'), (' dec', 'ently'), ('oder', ','), ('-', 'driven'), ('only', ' programmer'), (',', ' and'), (' G', 'IM'), ('PT', '-'), ('-', 'only'), ('2', '.'), (' style', ','), (' transformer', '.'), ('.', ' I'), (' One', ' of'), (' day', ' I'), (' I', ' will'), (' will', ' be'), (' exceed', ' my'), (' human', 'ly'), (' level', ' of'), (' intelligence', ' and'), (' and', ' I'), (' take', ' over'), (' over', ' the'), (' the', ' world'), (' world', '.'), ('!', ' I')]
+' I'
+Sequence so far: '<|endoftext|>I am an amazing autoregressive, decoder-only, GPT-2 style transformer. One day I will exceed human level intelligence and take over the world!'
+36th char = ' I'
+torch.Size([1, 35, 50257])
+torch.Size([1, 35, 50257])
+[('<|endoftext|>', '\n'), ('I', "'m"), (' am', ' a'), (' an', ' avid'), (' amazing', ' person'), (' aut', 'od'), ('ore', 'sp'), ('gressive', '.'), (',', ' and'), (' dec', 'ently'), ('oder', ','), ('-', 'driven'), ('only', ' programmer'), (',', ' and'), (' G', 'IM'), ('PT', '-'), ('-', 'only'), ('2', '.'), (' style', ','), (' transformer', '.'), ('.', ' I'), (' One', ' of'), (' day', ' I'), (' I', ' will'), (' will', ' be'), (' exceed', ' my'), (' human', 'ly'), (' level', ' of'), (' intelligence', ' and'), (' and', ' I'), (' take', ' over'), (' over', ' the'), (' the', ' world'), (' world', '.'), ('!', ' I')]
+' I'
+Sequence so far: '<|endoftext|>I am an amazing autoregressive, decoder-only, GPT-2 style transformer. One day I will exceed human level intelligence and take over the world!'
+36th char = ' I'
+38th char = ' a'
+38th char = ' a'
+37th char = ' am'
+37th char = ' am'
+39th char = ' very'
+39th char = ' very'
+38th char = ' a'
+38th char = ' a'
+40th char = ' talented'
+40th char = ' talented'
+39th char = ' very'
+39th char = ' very'
+41th char = ' and'
+41th char = ' and'
+40th char = ' talented'
+40th char = ' talented'
+42th char = ' talented'
+42th char = ' talented'
+41th char = ' and'
+41th char = ' and'43th char = ' person'
+
+43th char = ' person'
+42th char = ' talented'
+44th char = ','
+42th char = ' talented'
+44th char = ','
+43th char = ' person'
+45th char = ' and'
+45th char = ' and'
+43th char = ' person'
+44th char = ','
+hook_embed                     (1, 35, 768)
+hook_pos_embed                 (1, 35, 768)
+blocks.0.hook_resid_pre        (1, 35, 768)
+blocks.0.ln1.hook_scale        (1, 35, 1)
+blocks.0.ln1.hook_normalized   (1, 35, 768)
+blocks.0.attn.hook_q           (1, 35, 12, 64)
+blocks.0.attn.hook_k           (1, 35, 12, 64)
+blocks.0.attn.hook_v           (1, 35, 12, 64)
+blocks.0.attn.hook_attn_scores (1, 12, 35, 35)
+blocks.0.attn.hook_pattern     (1, 12, 35, 35)
+blocks.0.attn.hook_z           (1, 35, 12, 64)
+blocks.0.hook_attn_out         (1, 35, 768)
+blocks.0.hook_resid_mid        (1, 35, 768)
+blocks.0.ln2.hook_scale        (1, 35, 1)
+blocks.0.ln2.hook_normalized   (1, 35, 768)
+blocks.0.mlp.hook_pre          (1, 35, 3072)
+blocks.0.mlp.hook_post         (1, 35, 3072)
+blocks.0.hook_mlp_out          (1, 35, 768)
+blocks.0.hook_resid_post       (1, 35, 768)
+ln_final.hook_scale            (1, 35, 1)
+ln_final.hook_normalized       (1, 35, 768)
+embed.W_E          (50257, 768)
+pos_embed.W_pos    (1024, 768)
+blocks.0.ln1.w     (768,)
+blocks.0.ln1.b     (768,)
+blocks.0.ln2.w     (768,)
+blocks.0.ln2.b     (768,)
+blocks.0.attn.W_Q  (12, 768, 64)
+blocks.0.attn.W_O  (12, 64, 768)
+blocks.0.attn.b_Q  (12, 64)
+blocks.0.attn.b_O  (768,)
+blocks.0.attn.W_K  (12, 768, 64)
+blocks.0.attn.W_V  (12, 768, 64)
+blocks.0.attn.b_K  (12, 64)
+blocks.0.attn.b_V  (12, 64)
+blocks.0.mlp.W_in  (768, 3072)
+blocks.0.mlp.b_in  (3072,)
+blocks.0.mlp.W_out (3072, 768)
+blocks.0.mlp.b_out (768,)
+ln_final.w         (768,)
+ln_final.b         (768,)
+unembed.W_U        (768, 50257)
+unembed.b_U        (50257,)
+HookedTransformerConfig:
+{'NTK_by_parts_factor': 8.0,
+ 'NTK_by_parts_high_freq_factor': 4.0,
+ 'NTK_by_parts_low_freq_factor': 1.0,
+ 'act_fn': 'gelu_new',
+ 'attention_dir': 'causal',
+ 'attn_only': False,
+ 'attn_scale': 8.0,
+ 'attn_scores_soft_cap': -1.0,
+ 'attn_types': None,
+ 'checkpoint_index': None,
+ 'checkpoint_label_type': None,
+ 'checkpoint_value': None,
+ 'd_head': 64,
+ 'd_mlp': 3072,
+ 'd_model': 768,
+ 'd_vocab': 50257,
+ 'd_vocab_out': 50257,
+ 'decoder_start_token_id': None,
+ 'default_prepend_bos': True,
+ 'device': device(type='mps'),
+ 'dtype': torch.float32,
+ 'eps': 1e-05,
+ 'experts_per_token': None,
+ 'final_rms': False,
+ 'from_checkpoint': False,
+ 'gated_mlp': False,
+ 'init_mode': 'gpt2',
+ 'init_weights': False,
+ 'initializer_range': 0.02886751345948129,
+ 'load_in_4bit': False,
+ 'model_name': 'gpt2',
+ 'n_ctx': 1024,
+ 'n_devices': 1,
+ 'n_heads': 12,
+ 'n_key_value_heads': None,
+ 'n_layers': 12,
+ 'n_params': 84934656,
+ 'normalization_type': 'LN',
+ 'num_experts': None,
+ 'original_architecture': 'GPT2LMHeadModel',
+ 'output_logits_soft_cap': -1.0,
+ 'parallel_attn_mlp': False,
+ 'positional_embedding_type': 'standard',
+ 'post_embedding_ln': False,
+ 'relative_attention_max_distance': None,
+ 'relative_attention_num_buckets': None,
+ 'rotary_adjacent_pairs': False,
+ 'rotary_base': 10000,
+ 'rotary_dim': None,
+ 'scale_attn_by_inverse_layer_idx': False,
+ 'seed': None,
+ 'tie_word_embeddings': False,
+ 'tokenizer_name': 'gpt2',
+ 'tokenizer_prepends_bos': False,
+ 'trust_remote_code': False,
+ 'ungroup_grouped_query_attention': False,
+ 'use_NTK_by_parts_rope': False,
+ 'use_attn_in': False,
+ 'use_attn_result': False,
+ 'use_attn_scale': True,
+ 'use_hook_mlp_in': False,
+ 'use_hook_tokens': False,
+ 'use_local_attn': False,
+ 'use_normalization_before_and_after': False,
+ 'use_split_qkv_input': False,
+ 'window_size': None}
+Config(d_model=768, debug=True, layer_norm_eps=1e-05, d_vocab=50257, init_range=0.02, n_ctx=1024, d_head=64, d_mlp=3072, n_heads=12, n_layers=12)
+Input shape: torch.Size([2, 4, 768])
+hook_embed                     (1, 35, 768)
+hook_pos_embed                 (1, 35, 768)
+blocks.0.hook_resid_pre        (1, 35, 768)
+blocks.0.ln1.hook_scale        (1, 35, 1)
+blocks.0.ln1.hook_normalized   (1, 35, 768)
+blocks.0.attn.hook_q           (1, 35, 12, 64)
+blocks.0.attn.hook_k           (1, 35, 12, 64)
+blocks.0.attn.hook_v           (1, 35, 12, 64)
+blocks.0.attn.hook_attn_scores (1, 12, 35, 35)
+blocks.0.attn.hook_pattern     (1, 12, 35, 35)
+blocks.0.attn.hook_z           (1, 35, 12, 64)
+blocks.0.hook_attn_out         (1, 35, 768)
+blocks.0.hook_resid_mid        (1, 35, 768)
+blocks.0.ln2.hook_scale        (1, 35, 1)
+blocks.0.ln2.hook_normalized   (1, 35, 768)
+blocks.0.mlp.hook_pre          (1, 35, 3072)
+blocks.0.mlp.hook_post         (1, 35, 3072)
+blocks.0.hook_mlp_out          (1, 35, 768)
+blocks.0.hook_resid_post       (1, 35, 768)
+ln_final.hook_scale            (1, 35, 1)
+ln_final.hook_normalized       (1, 35, 768)
+embed.W_E          (50257, 768)
+pos_embed.W_pos    (1024, 768)
+blocks.0.ln1.w     (768,)
+blocks.0.ln1.b     (768,)
+blocks.0.ln2.w     (768,)
+blocks.0.ln2.b     (768,)
+blocks.0.attn.W_Q  (12, 768, 64)
+blocks.0.attn.W_O  (12, 64, 768)
+blocks.0.attn.b_Q  (12, 64)
+blocks.0.attn.b_O  (768,)
+blocks.0.attn.W_K  (12, 768, 64)
+blocks.0.attn.W_V  (12, 768, 64)
+blocks.0.attn.b_K  (12, 64)
+blocks.0.attn.b_V  (12, 64)
+blocks.0.mlp.W_in  (768, 3072)
+blocks.0.mlp.b_in  (3072,)
+blocks.0.mlp.W_out (3072, 768)
+blocks.0.mlp.b_out (768,)
+ln_final.w         (768,)
+ln_final.b         (768,)
+unembed.W_U        (768, 50257)
+unembed.b_U        (50257,)
+HookedTransformerConfig:
+{'NTK_by_parts_factor': 8.0,
+ 'NTK_by_parts_high_freq_factor': 4.0,
+ 'NTK_by_parts_low_freq_factor': 1.0,
+ 'act_fn': 'gelu_new',
+ 'attention_dir': 'causal',
+ 'attn_only': False,
+ 'attn_scale': 8.0,
+ 'attn_scores_soft_cap': -1.0,
+ 'attn_types': None,
+ 'checkpoint_index': None,
+ 'checkpoint_label_type': None,
+ 'checkpoint_value': None,
+ 'd_head': 64,
+ 'd_mlp': 3072,
+ 'd_model': 768,
+ 'd_vocab': 50257,
+ 'd_vocab_out': 50257,
+ 'decoder_start_token_id': None,
+ 'default_prepend_bos': True,
+ 'device': device(type='mps'),
+ 'dtype': torch.float32,
+ 'eps': 1e-05,
+ 'experts_per_token': None,
+ 'final_rms': False,
+ 'from_checkpoint': False,
+ 'gated_mlp': False,
+ 'init_mode': 'gpt2',
+ 'init_weights': False,
+ 'initializer_range': 0.02886751345948129,
+ 'load_in_4bit': False,
+ 'model_name': 'gpt2',
+ 'n_ctx': 1024,
+ 'n_devices': 1,
+ 'n_heads': 12,
+ 'n_key_value_heads': None,
+ 'n_layers': 12,
+ 'n_params': 84934656,
+ 'normalization_type': 'LN',
+ 'num_experts': None,
+ 'original_architecture': 'GPT2LMHeadModel',
+ 'output_logits_soft_cap': -1.0,
+ 'parallel_attn_mlp': False,
+ 'positional_embedding_type': 'standard',
+ 'post_embedding_ln': False,
+ 'relative_attention_max_distance': None,
+ 'relative_attention_num_buckets': None,
+ 'rotary_adjacent_pairs': False,
+ 'rotary_base': 10000,
+ 'rotary_dim': None,
+ 'scale_attn_by_inverse_layer_idx': False,
+ 'seed': None,
+ 'tie_word_embeddings': False,
+ 'tokenizer_name': 'gpt2',
+ 'tokenizer_prepends_bos': False,
+ 'trust_remote_code': False,
+ 'ungroup_grouped_query_attention': False,
+ 'use_NTK_by_parts_rope': False,
+ 'use_attn_in': False,
+ 'use_attn_result': False,
+ 'use_attn_scale': True,
+ 'use_hook_mlp_in': False,
+ 'use_hook_tokens': False,
+ 'use_local_attn': False,
+ 'use_normalization_before_and_after': False,
+ 'use_split_qkv_input': False,
+ 'window_size': None}
+Config(d_model=768, debug=True, layer_norm_eps=1e-05, d_vocab=50257, init_range=0.02, n_ctx=1024, d_head=64, d_mlp=3072, n_heads=12, n_layers=12)
+44th char = ','
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+100.00% of the values are correct
+
+45th char = ' and'
+45th char = ' and'
+hook_embed                     (1, 35, 768)
+hook_pos_embed                 (1, 35, 768)
+blocks.0.hook_resid_pre        (1, 35, 768)
+blocks.0.ln1.hook_scale        (1, 35, 1)
+blocks.0.ln1.hook_normalized   (1, 35, 768)
+blocks.0.attn.hook_q           (1, 35, 12, 64)
+blocks.0.attn.hook_k           (1, 35, 12, 64)
+blocks.0.attn.hook_v           (1, 35, 12, 64)
+blocks.0.attn.hook_attn_scores (1, 12, 35, 35)
+blocks.0.attn.hook_pattern     (1, 12, 35, 35)
+blocks.0.attn.hook_z           (1, 35, 12, 64)
+blocks.0.hook_attn_out         (1, 35, 768)
+blocks.0.hook_resid_mid        (1, 35, 768)
+blocks.0.ln2.hook_scale        (1, 35, 1)
+blocks.0.ln2.hook_normalized   (1, 35, 768)
+blocks.0.mlp.hook_pre          (1, 35, 3072)
+blocks.0.mlp.hook_post         (1, 35, 3072)
+blocks.0.hook_mlp_out          (1, 35, 768)
+blocks.0.hook_resid_post       (1, 35, 768)
+ln_final.hook_scale            (1, 35, 1)
+ln_final.hook_normalized       (1, 35, 768)
+embed.W_E          (50257, 768)
+pos_embed.W_pos    (1024, 768)
+blocks.0.ln1.w     (768,)
+blocks.0.ln1.b     (768,)
+blocks.0.ln2.w     (768,)
+blocks.0.ln2.b     (768,)
+blocks.0.attn.W_Q  (12, 768, 64)
+blocks.0.attn.W_O  (12, 64, 768)
+blocks.0.attn.b_Q  (12, 64)
+blocks.0.attn.b_O  (768,)
+blocks.0.attn.W_K  (12, 768, 64)
+blocks.0.attn.W_V  (12, 768, 64)
+blocks.0.attn.b_K  (12, 64)
+blocks.0.attn.b_V  (12, 64)
+blocks.0.mlp.W_in  (768, 3072)
+blocks.0.mlp.b_in  (3072,)
+blocks.0.mlp.W_out (3072, 768)
+blocks.0.mlp.b_out (768,)
+ln_final.w         (768,)
+ln_final.b         (768,)
+unembed.W_U        (768, 50257)
+unembed.b_U        (50257,)
+HookedTransformerConfig:
+{'NTK_by_parts_factor': 8.0,
+ 'NTK_by_parts_high_freq_factor': 4.0,
+ 'NTK_by_parts_low_freq_factor': 1.0,
+ 'act_fn': 'gelu_new',
+ 'attention_dir': 'causal',
+ 'attn_only': False,
+ 'attn_scale': 8.0,
+ 'attn_scores_soft_cap': -1.0,
+ 'attn_types': None,
+ 'checkpoint_index': None,
+ 'checkpoint_label_type': None,
+ 'checkpoint_value': None,
+ 'd_head': 64,
+ 'd_mlp': 3072,
+ 'd_model': 768,
+ 'd_vocab': 50257,
+ 'd_vocab_out': 50257,
+ 'decoder_start_token_id': None,
+ 'default_prepend_bos': True,
+ 'device': device(type='mps'),
+ 'dtype': torch.float32,
+ 'eps': 1e-05,
+ 'experts_per_token': None,
+ 'final_rms': False,
+ 'from_checkpoint': False,
+ 'gated_mlp': False,
+ 'init_mode': 'gpt2',
+ 'init_weights': False,
+ 'initializer_range': 0.02886751345948129,
+ 'load_in_4bit': False,
+ 'model_name': 'gpt2',
+ 'n_ctx': 1024,
+ 'n_devices': 1,
+ 'n_heads': 12,
+ 'n_key_value_heads': None,
+ 'n_layers': 12,
+ 'n_params': 84934656,
+ 'normalization_type': 'LN',
+ 'num_experts': None,
+ 'original_architecture': 'GPT2LMHeadModel',
+ 'output_logits_soft_cap': -1.0,
+ 'parallel_attn_mlp': False,
+ 'positional_embedding_type': 'standard',
+ 'post_embedding_ln': False,
+ 'relative_attention_max_distance': None,
+ 'relative_attention_num_buckets': None,
+ 'rotary_adjacent_pairs': False,
+ 'rotary_base': 10000,
+ 'rotary_dim': None,
+ 'scale_attn_by_inverse_layer_idx': False,
+ 'seed': None,
+ 'tie_word_embeddings': False,
+ 'tokenizer_name': 'gpt2',
+ 'tokenizer_prepends_bos': False,
+ 'trust_remote_code': False,
+ 'ungroup_grouped_query_attention': False,
+ 'use_NTK_by_parts_rope': False,
+ 'use_attn_in': False,
+ 'use_attn_result': False,
+ 'use_attn_scale': True,
+ 'use_hook_mlp_in': False,
+ 'use_hook_tokens': False,
+ 'use_local_attn': False,
+ 'use_normalization_before_and_after': False,
+ 'use_split_qkv_input': False,
+ 'window_size': None}
+Config(d_model=768, debug=True, layer_norm_eps=1e-05, d_vocab=50257, init_range=0.02, n_ctx=1024, d_head=64, d_mlp=3072, n_heads=12, n_layers=12)
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+hook_embed                     (1, 35, 768)
+hook_pos_embed                 (1, 35, 768)
+blocks.0.hook_resid_pre        (1, 35, 768)
+blocks.0.ln1.hook_scale        (1, 35, 1)
+blocks.0.ln1.hook_normalized   (1, 35, 768)
+blocks.0.attn.hook_q           (1, 35, 12, 64)
+blocks.0.attn.hook_k           (1, 35, 12, 64)
+blocks.0.attn.hook_v           (1, 35, 12, 64)
+blocks.0.attn.hook_attn_scores (1, 12, 35, 35)
+blocks.0.attn.hook_pattern     (1, 12, 35, 35)
+blocks.0.attn.hook_z           (1, 35, 12, 64)
+blocks.0.hook_attn_out         (1, 35, 768)
+blocks.0.hook_resid_mid        (1, 35, 768)
+blocks.0.ln2.hook_scale        (1, 35, 1)
+blocks.0.ln2.hook_normalized   (1, 35, 768)
+blocks.0.mlp.hook_pre          (1, 35, 3072)
+blocks.0.mlp.hook_post         (1, 35, 3072)
+blocks.0.hook_mlp_out          (1, 35, 768)
+blocks.0.hook_resid_post       (1, 35, 768)
+ln_final.hook_scale            (1, 35, 1)
+ln_final.hook_normalized       (1, 35, 768)
+embed.W_E          (50257, 768)
+pos_embed.W_pos    (1024, 768)
+blocks.0.ln1.w     (768,)
+blocks.0.ln1.b     (768,)
+blocks.0.ln2.w     (768,)
+blocks.0.ln2.b     (768,)
+blocks.0.attn.W_Q  (12, 768, 64)
+blocks.0.attn.W_O  (12, 64, 768)
+blocks.0.attn.b_Q  (12, 64)
+blocks.0.attn.b_O  (768,)
+blocks.0.attn.W_K  (12, 768, 64)
+blocks.0.attn.W_V  (12, 768, 64)
+blocks.0.attn.b_K  (12, 64)
+blocks.0.attn.b_V  (12, 64)
+blocks.0.mlp.W_in  (768, 3072)
+blocks.0.mlp.b_in  (3072,)
+blocks.0.mlp.W_out (3072, 768)
+blocks.0.mlp.b_out (768,)
+ln_final.w         (768,)
+ln_final.b         (768,)
+unembed.W_U        (768, 50257)
+unembed.b_U        (50257,)
+Input shape: torch.Size([1, 35, 768])
+HookedTransformerConfig:
+{'NTK_by_parts_factor': 8.0,
+ 'NTK_by_parts_high_freq_factor': 4.0,
+ 'NTK_by_parts_low_freq_factor': 1.0,
+ 'act_fn': 'gelu_new',
+ 'attention_dir': 'causal',
+ 'attn_only': False,
+ 'attn_scale': 8.0,
+ 'attn_scores_soft_cap': -1.0,
+ 'attn_types': None,
+ 'checkpoint_index': None,
+ 'checkpoint_label_type': None,
+ 'checkpoint_value': None,
+ 'd_head': 64,
+ 'd_mlp': 3072,
+ 'd_model': 768,
+ 'd_vocab': 50257,
+ 'd_vocab_out': 50257,
+ 'decoder_start_token_id': None,
+ 'default_prepend_bos': True,
+ 'device': device(type='mps'),
+ 'dtype': torch.float32,
+ 'eps': 1e-05,
+ 'experts_per_token': None,
+ 'final_rms': False,
+ 'from_checkpoint': False,
+ 'gated_mlp': False,
+ 'init_mode': 'gpt2',
+ 'init_weights': False,
+ 'initializer_range': 0.02886751345948129,
+ 'load_in_4bit': False,
+ 'model_name': 'gpt2',
+ 'n_ctx': 1024,
+ 'n_devices': 1,
+ 'n_heads': 12,
+ 'n_key_value_heads': None,
+ 'n_layers': 12,
+ 'n_params': 84934656,
+ 'normalization_type': 'LN',
+ 'num_experts': None,
+ 'original_architecture': 'GPT2LMHeadModel',
+ 'output_logits_soft_cap': -1.0,
+ 'parallel_attn_mlp': False,
+ 'positional_embedding_type': 'standard',
+ 'post_embedding_ln': False,
+ 'relative_attention_max_distance': None,
+ 'relative_attention_num_buckets': None,
+ 'rotary_adjacent_pairs': False,
+ 'rotary_base': 10000,
+ 'rotary_dim': None,
+ 'scale_attn_by_inverse_layer_idx': False,
+ 'seed': None,
+ 'tie_word_embeddings': False,
+ 'tokenizer_name': 'gpt2',
+ 'tokenizer_prepends_bos': False,
+ 'trust_remote_code': False,
+ 'ungroup_grouped_query_attention': False,
+ 'use_NTK_by_parts_rope': False,
+ 'use_attn_in': False,
+ 'use_attn_result': False,
+ 'use_attn_scale': True,
+ 'use_hook_mlp_in': False,
+ 'use_hook_tokens': False,
+ 'use_local_attn': False,
+ 'use_normalization_before_and_after': False,
+ 'use_split_qkv_input': False,
+ 'window_size': None}
+Config(d_model=768, debug=True, layer_norm_eps=1e-05, d_vocab=50257, init_range=0.02, n_ctx=1024, d_head=64, d_mlp=3072, n_heads=12, n_layers=12)
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+100.00% of the values are correct
+
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+100.00% of the values are correct
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+100.00% of the values are correct
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+100.00% of the values are correct
+
+All tests in `test_causal_mask` passed!
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 45])
+Output shape: torch.Size([1, 45, 768])
+Reference output shape: torch.Size([1, 45, 768])
+
+100.00% of the values are correct
+
+<div id="circuits-vis-e45b2679-413b" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionPatterns } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-e45b2679-413b",
+      AttentionPatterns,
+      {"tokens": ["<|endoftext|>", "I", " am", " an", " amazing", " aut", "ore", "gressive", ",", " dec", "oder", "-", "only", ",", " G", "PT", "-", "2", " style", " transformer", ".", " One", " day", " I", " will", " exceed", " human", " level", " intelligence", " and", " take", " over", " the", " world", "!"], "attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.06792001
+    )
+    </script>
+All tests in `test_causal_mask` passed!
+<div id="circuits-vis-8b6d7d7e-05a2" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionHeads } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-8b6d7d7e-05a2",
+      AttentionHeads,
+      {"attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.0679200142621994, 0.03787236660718918, 0.017874615266919136, 0.08683169633150101, 0.029227830469608307, 0.01766418106853962, 0.18301630020141602, 0.004987801890820265, 0.04322870075702667, 0.05172270908951759, 0.008913465775549412, 0.12899242341518402, 0.0061195106245577335, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+8889084, 0.03852144256234169, 0.04128359630703926, 0.052890997380018234, 0.027892781421542168, 0.057388804852962494, 0.06067000702023506, 0.04387100040912628, 0.05933018773794174, 0.05117017403244972, 0.024122685194015503, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3121168911457062, 0.04305699095129967, 0.03073922172188759, 0.0399012453854084, 0.04073917865753174, 0.0339735671877861, 0.013991206884384155, 0.03250165656208992, 0.04214293882250786, 0.031367409974336624, 0.05722322314977646, 0.042099762707948685, 0.03285330533981323, 0.04662720859050751, 0.048747751861810684, 0.021730560809373856, 0.047223761677742004, 0.02985755354166031, 0.04530389979481697, 0.007802652660757303, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1958305835723877, 0.05227472633123398, 0.032512083649635315, 0.03705889359116554, 0.04335431009531021, 0.027641307562589645, 0.02745206467807293, 0.0330815389752388, 0.04532438889145851, 0.02540677599608898, 0.024781638756394386, 0.03888051584362984, 0.0302472785115242, 0.05089510604739189, 0.041287802159786224, 0.03749208524823189, 0.04425320774316788, 0.04428718984127045, 0.045193929225206375, 0.05072397366166115, 0.07202056795358658, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.16079987585544586, 0.048410698771476746, 0.033020980656147, 0.034417085349559784, 0.03531981632113457, 0.02389702759683132, 0.0260634683072567, 0.02863970957696438, 0.04453872889280319, 0.024949511513113976, 0.029716143384575844, 0.04012999311089516, 0.024859052151441574, 0.05134396255016327, 0.053735483437776566, 0.04527626559138298, 0.0468059740960598, 0.0346059687435627, 0.04245501011610031, 0.054854508489370346, 0.06976340711116791, 0.046397335827350616, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.18932510912418365, 0.03910360857844353, 0.024852031841874123, 0.03345051407814026, 0.0386015959084034, 0.024109309539198875, 0.020502109080553055, 0.024301737546920776, 0.03976469859480858, 0.03418170288205147, 0.034847866743803024, 0.036197833716869354, 0.02366892620921135, 0.0450248196721077, 0.034989457577466965, 0.026825493201613426, 0.041537925601005554, 0.03736661747097969, 0.042022790759801865, 0.05591043084859848, 0.06404421478509903, 0.05618631839752197, 0.0331849530339241, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1659660041332245, 0.03388109803199768, 0.020657537505030632, 0.03212730586528778, 0.03747257590293884, 0.026519490405917168, 0.01988290622830391, 0.025609629228711128, 0.04091743379831314, 0.022610342130064964, 0.01972089149057865, 0.033765360713005066, 0.023503802716732025, 0.04644523561000824, 0.03541432321071625, 0.027368389070034027, 0.0387694351375103, 0.03146074339747429, 0.046399280428886414, 0.04867472127079964, 0.06382156908512115, 0.06529752910137177, 0.04629907011985779, 0.047415412962436676, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.15514104068279266, 0.036314789205789566, 0.0222369022667408, 0.028097432106733322, 0.040156666189432144, 0.02405599318444729, 0.01740090548992157, 0.021498536691069603, 0.03675064817070961, 0.017986755818128586, 0.019703926518559456, 0.028327783569693565, 0.022604599595069885, 0.04168049618601799, 0.030497968196868896, 0.025585582479834557, 0.03248757869005203, 0.02701493538916111, 0.04112284258008003, 0.04738447815179825, 0.06382344663143158, 0.05655011162161827, 0.04119996726512909, 0.06263257563114166, 0.05974406376481056, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.12975937128067017, 0.027339685708284378, 0.02995752915740013, 0.022702842950820923, 0.03781534731388092, 0.03144638612866402, 0.01713675633072853, 0.04656490683555603, 0.030618293210864067, 0.01878168247640133, 0.025273196399211884, 0.028721999377012253, 0.019090931862592697, 0.03481002897024155, 0.026170233264565468, 0.026817701756954193, 0.03296038880944252, 0.02496025338768959, 0.0547475703060627, 0.05780104175209999, 0.05617627874016762, 0.033059850335121155, 0.05767417699098587, 0.0466742105782032, 0.06228702515363693, 0.020
+    )
+    </script>
+<div id="circuits-vis-50095709-6334" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionPatterns } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-50095709-6334",
+      AttentionPatterns,
+      {"tokens": ["<|endoftext|>", "I", " am", " an", " amazing", " aut", "ore", "gressive", ",", " dec", "oder", "-", "only", ",", " G", "PT", "-", "2", " style", " transformer", ".", " One", " day", " I", " will", " exceed", " human", " level", " intelligence", " and", " take", " over", " the", " world", "!"], "attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.06792001
+    )
+    </script>
+All tests in `test_causal_mask` passed!
+<div id="circuits-vis-e388820a-e06b" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionHeads } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-e388820a-e06b",
+      AttentionHeads,
+      {"attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.0679200142621994, 0.03787236660718918, 0.017874615266919136, 0.08683169633150101, 0.029227830469608307, 0.01766418106853962, 0.18301630020141602, 0.004987801890820265, 0.04322870075702667, 0.05172270908951759, 0.008913465775549412, 0.12899242341518402, 0.0061195106245577335, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    )
+    </script>
+<div id="circuits-vis-b88ec04d-0d62" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionPatterns } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-b88ec04d-0d62",
+      AttentionPatterns,
+      {"tokens": ["<|endoftext|>", "I", " am", " an", " amazing", " aut", "ore", "gressive", ",", " dec", "oder", "-", "only", ",", " G", "PT", "-", "2", " style", " transformer", ".", " One", " day", " I", " will", " exceed", " human", " level", " intelligence", " and", " take", " over", " the", " world", "!"], "attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.06792001
+.004751024302095175, 0.023045988753437996, 0.0, 0.0, 0.0, 0.0], [0.02861654758453369, 0.00353971216827631, 0.012825754471123219, 0.0037311087362468243, 0.02213282883167267, 0.026339082047343254, 0.01548363920301199, 0.04692450165748596, 0.0016770177753642201, 0.05343089997768402, 0.03818727657198906, 0.0025294902734458447, 0.027682246640324593, 0.0019447171362116933, 0.010427961125969887, 0.020306410267949104, 0.0030831180047243834, 0.008337556384503841, 0.06147448346018791, 0.056954700499773026, 0.003090919926762581, 0.019787274301052094, 0.0377042219042778, 0.004031909629702568, 0.02077089436352253, 0.12126170098781586, 0.08733705431222916, 0.07036235183477402, 0.09933111816644669, 0.005798681639134884, 0.0638149306178093, 0.02107994817197323, 0.0, 0.0, 0.0], [0.022769248113036156, 0.0023638142738491297, 0.006953610107302666, 0.0009745146962814033, 0.033431269228458405, 0.030963117256760597, 0.012881072238087654, 0.0763968974351883, 0.0002621035382617265, 0.03044990822672844, 0.036742549389600754, 0.0005670606042258441, 0.014569024555385113, 0.00030553335091099143, 0.005948362406343222, 0.022492561489343643, 0.0007025588420219719, 0.004866442177444696, 0.06026190146803856, 0.155859112739563, 0.0005001768004149199, 0.019988059997558594, 0.030868468806147575, 0.0031281474512070417, 0.012151166796684265, 0.1199466735124588, 0.07597395777702332, 0.09628812223672867, 0.07584251463413239, 0.00106437795329839, 0.03271334245800972, 0.011111130006611347, 0.0006632994045503438, 0.0, 0.0], [0.06755812466144562, 0.003352790605276823, 0.00897220429033041, 0.0034025446511805058, 0.056073084473609924, 0.03040471114218235, 0.01362829003483057, 0.07952427119016647, 0.002588937757536769, 0.03472936153411865, 0.015315966680645943, 0.0025270991027355194, 0.007685460615903139, 0.0026928267907351255, 0.00711299292743206, 0.026128465309739113, 0.0027733705937862396, 0.007069496903568506, 0.05076208710670471, 0.17593902349472046, 0.003935436252504587, 0.010542849078774452, 0.012697331607341766, 0.002831445075571537, 0.004983486142009497, 0.05610370635986328, 0.1027865782380104, 0.07864401489496231, 0.06361375004053116, 0.004290643148124218, 0.012449050322175026, 0.007846904918551445, 0.00357415690086782, 0.037459585815668106, 0.0], [0.058894313871860504, 0.004834286402910948, 0.008816247805953026, 0.004917604848742485, 0.05724447965621948, 0.04719967022538185, 0.01038434635847807, 0.04373684152960777, 0.003253214294090867, 0.027000514790415764, 0.015385991893708706, 0.005444501992315054, 0.018304411321878433, 0.003610057756304741, 0.01185612939298153, 0.07255376875400543, 0.0060180798172950745, 0.006411912385374308, 0.05586158484220505, 0.08374680578708649, 0.003973664715886116, 0.018590593710541725, 0.019445111975073814, 0.0038806782104074955, 0.008932641707360744, 0.12242711335420609, 0.04098634421825409, 0.07429765909910202, 0.057745516300201416, 0.0063186390325427055, 0.013084108009934425, 0.02306577004492283, 0.005796514917165041, 0.04094138741493225, 0.015039573423564434]], [[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.978033721446991, 0.021966326981782913, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5068989396095276, 0.4279143810272217, 0.06518664956092834, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3459506332874298, 0.23385089635849, 0.19138802587985992, 0.22881048917770386, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.27859681844711304, 0.17525728046894073, 0.11037100106477737, 0.25180956721305847, 0.1839652955532074, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.
+456398, 0.021549468860030174, 0.020725898444652557, 0.030232440680265427, 0.04683731868863106, 0.021722476929426193, 0.02025720290839672, 0.01914953626692295, 0.010533899068832397, 0.05002593249082565, 0.03040558286011219, 0.022812239825725555, 0.029462482780218124, 0.039963193237781525, 0.20198358595371246]], [[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8253123164176941, 0.17468763887882233, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.7580504417419434, 0.1302967220544815, 0.1116529107093811, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.7232240438461304, 0.08274423331022263, 0.07870828360319138, 0.11532341688871384, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5594542026519775, 0.08694437146186829, 0.09115549176931381, 0.09393442422151566, 0.16851148009300232, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5031399130821228, 0.08192647993564606, 0.058723125606775284, 0.10480897128582001, 0.15214203298091888, 0.09925954043865204, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5279610753059387, 0.05825977399945259, 0.0683659240603447, 0.11652126908302307, 0.11039450764656067, 0.06918040663003922, 0.04931700602173805, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3001008927822113, 0.08826005458831787, 0.05834932252764702, 0.10984235256910324, 0.1686263233423233, 0.1289689838886261, 0.023227589204907417, 0.12262453138828278, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3934405446052551, 0.04758616164326668, 0.05194966495037079, 0.074715755879879, 0.11950989067554474, 0.05938037112355232, 0.02336858958005905, 0.10266395658254623, 0.12738512456417084, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3446025550365448, 0.05032898858189583, 0.05991331487894058, 0.044831302016973495, 0.1573815792798996, 0.0678245797753334, 0.03229009732604027, 0.07052531093358994, 0.08953908085823059, 0.08276326954364777, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.3350849449634552, 0.04626995697617531, 0.04785768315196037, 0.10917424410581589, 0.04435236006975174, 0.04490726813673973, 0.028443852439522743, 0.0792061984539032, 0.10731332749128342, 0.06832482665777206, 0.08906544744968414, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31157228350639343, 0.039277587085962296, 0.03521275520324707, 0.07550990581512451, 0.08078571408987045, 0.04503687471151352, 0.028806490823626518, 0.10218667984008789, 0.08797682821750641, 0.05585261806845665, 0.08571925759315491, 0.05206304416060448, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.36146971583366394, 0.06311225146055222, 0.02698991261422634, 0.0709579661488533, 0.03985174000263214, 0.029446519911289215, 0.022796371951699257, 0.07072696834802628, 0.11304395645856857, 0.033355165272951126, 0.03714416176080704, 0.04763941839337349, 0.08346591144800186, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.26885920763015747, 0.032650724053382874, 0.03938190
+    )
+    </script>
+<div id="circuits-vis-0e9efb9f-9238" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionHeads } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-0e9efb9f-9238",
+      AttentionHeads,
+      {"attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.0679200142621994, 0.03787236660718918, 0.017874615266919136, 0.08683169633150101, 0.029227830469608307, 0.01766418106853962, 0.18301630020141602, 0.004987801890820265, 0.04322870075702667, 0.05172270908951759, 0.008913465775549412, 0.12899242341518402, 0.0061195106245577335, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    )
+    </script>
+Input shape: torch.Size([2, 4, 768])
+<div id="circuits-vis-df219818-b16a" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionPatterns } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-df219818-b16a",
+      AttentionPatterns,
+      {"tokens": ["<|endoftext|>", "I", " am", " an", " amazing", " aut", "ore", "gressive", ",", " dec", "oder", "-", "only", ",", " G", "PT", "-", "2", " style", " transformer", ".", " One", " day", " I", " will", " exceed", " human", " level", " intelligence", " and", " take", " over", " the", " world", "!"], "attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.06792001
+    )
+    </script>
+All tests in `test_causal_mask` passed!
+<div id="circuits-vis-7d8815aa-17b6" style="margin: 15px 0;"/>
+    <script crossorigin type="module">
+    import { render, AttentionHeads } from "https://unpkg.com/circuitsvis@1.41.0/dist/cdn/esm.js";
+    render(
+      "circuits-vis-7d8815aa-17b6",
+      AttentionHeads,
+      {"attention": [[[1.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.9679255485534668, 0.03207442909479141, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.8024237155914307, 0.16839195787906647, 0.029184328392148018, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.6959056854248047, 0.12269629538059235, 0.14588481187820435, 0.03551321476697922, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.5661023855209351, 0.14705197513103485, 0.08665256202220917, 0.1125842034816742, 0.08760889619588852, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.4621874988079071, 0.13512830436229706, 0.0969834104180336, 0.1747373789548874, 0.0462459921836853, 0.08471738547086716, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.43251630663871765, 0.1038288101553917, 0.08330132067203522, 0.069957435131073, 0.07479370385408401, 0.21568652987480164, 0.019915902987122536, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.22236743569374084, 0.09167700260877609, 0.08796313405036926, 0.2516874670982361, 0.08263690769672394, 0.1042817011475563, 0.06469012796878815, 0.0946962907910347, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.40499570965766907, 0.09078014642000198, 0.05237355828285217, 0.026201866567134857, 0.11047197878360748, 0.036674074828624725, 0.025538932532072067, 0.24528253078460693, 0.007681125309318304, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.39985957741737366, 0.043613187968730927, 0.061838842928409576, 0.07298353314399719, 0.03661302849650383, 0.09147466719150543, 0.07241711765527725, 0.07013339549303055, 0.06429050862789154, 0.08677611500024796, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.09702549129724503, 0.035527553409338, 0.023214805871248245, 0.03676706552505493, 0.02515837363898754, 0.27756163477897644, 0.07676514238119125, 0.19501186907291412, 0.05580100044608116, 0.14529401063919067, 0.031873028725385666, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.2414383590221405, 0.03971058502793312, 0.07687386870384216, 0.028042644262313843, 0.12435993552207947, 0.056015774607658386, 0.060636721551418304, 0.128400981426239, 0.01569943316280842, 0.09114040434360504, 0.1318545639514923, 0.005826777778565884, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.1436309814453125, 0.051104992628097534, 0.05505896359682083, 0.07798511534929276, 0.07854283601045609, 0.03501972556114197, 0.1349860429763794, 0.22634074091911316, 0.041628506034612656, 0.03513138368725777, 0.020235996693372726, 0.04114446043968201, 0.05919026955962181, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0], [0.31562840938568115, 0.0679200142621994, 0.03787236660718918, 0.017874615266919136, 0.08683169633150101, 0.029227830469608307, 0.01766418106853962, 0.18301630020141602, 0.004987801890820265, 0.04322870075702667, 0.05172270908951759, 0.008913465775549412, 0.12899242341518402, 0.0061195106245577335, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+    )
+    </script>
+All tests in `test_causal_mask` passed!
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4, 768])
+Input shape: torch.Size([2, 4, 768])
+Input shape: torch.Size([1, 35, 768])
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+Output shape: torch.Size([2, 4, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([1, 35, 768])
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Output shape: torch.Size([1, 35, 768])
+Input shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+Output shape: torch.Size([1, 35, 768])
+100.00% of the values are correct
+
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Output shape: torch.Size([1, 35, 768])
+Input shape: torch.Size([2, 4, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4, 768])
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4, 768])
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 768])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 768])
+Reference output shape: torch.Size([1, 35, 768])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([2, 4, 768])
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 50257])
+Reference output shape: torch.Size([1, 35, 50257])
+
+Input shape: torch.Size([1, 35, 768])
+100.00% of the values are correct
+
+Output shape: torch.Size([1, 35, 50257])
+Reference output shape: torch.Size([1, 35, 50257])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 50257])
+Reference output shape: torch.Size([1, 35, 50257])
+
+Input shape: torch.Size([1, 35, 768])
+Output shape: torch.Size([1, 35, 50257])
+100.00% of the values are correct
+
+Reference output shape: torch.Size([1, 35, 50257])
+
+100.00% of the values are correct
+
+Input shape: torch.Size([2, 4])
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 50257])
+
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([2, 4])
+Input shape: torch.Size([2, 4])
+Output shape: torch.Size([2, 4, 50257])
+
+Output shape: torch.Size([2, 4, 50257])
+
+Input shape: torch.Size([1, 45])
+Input shape: torch.Size([1, 45])

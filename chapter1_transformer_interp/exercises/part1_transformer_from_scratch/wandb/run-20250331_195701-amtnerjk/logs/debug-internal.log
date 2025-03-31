@@ -1,0 +1,7 @@
+{"time":"2025-03-31T19:57:01.951558+08:00","level":"INFO","msg":"stream: starting","core version":"0.19.8","symlink path":"/Users/jason/Documents/01 西北工业大学/02 图像课题组（ICLab）/08 Code/02-learn-pytorch/chapter1_transformer_interp/exercises/part1_transformer_from_scratch/wandb/run-20250331_195701-amtnerjk/logs/debug-core.log"}
+{"time":"2025-03-31T19:57:02.096946+08:00","level":"INFO","msg":"created new stream","id":"amtnerjk"}
+{"time":"2025-03-31T19:57:02.097052+08:00","level":"INFO","msg":"stream: started","id":"amtnerjk"}
+{"time":"2025-03-31T19:57:02.09756+08:00","level":"INFO","msg":"handler: started","stream_id":"amtnerjk"}
+{"time":"2025-03-31T19:57:02.098111+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"amtnerjk"}
+{"time":"2025-03-31T19:57:02.09839+08:00","level":"INFO","msg":"sender: started","stream_id":"amtnerjk"}
+{"time":"2025-03-31T19:57:03.009099+08:00","level":"INFO","msg":"Starting system monitor"}
