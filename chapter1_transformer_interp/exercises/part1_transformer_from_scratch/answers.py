@@ -608,10 +608,11 @@ if MAIN:
     print(first_batch["tokens"].shape)
 
 # %%
+from typing import TypeVar, Generic
 
-
-class TransformerTrainer:
-    def __init__(self, args: TransformerTrainingArgs, model: DemoTransformer):
+GenericArgs = TypeVar('GenericArgs', bound=TransformerTrainingArgs)
+class TransformerTrainer(Generic[GenericArgs]):
+    def __init__(self, args: GenericArgs, model: DemoTransformer):
         super().__init__()
         self.model = model
         self.args = args
@@ -685,6 +686,8 @@ class TransformerTrainer:
 
         wandb.finish()
 
+# %%
+
 
 if MAIN:
     # See the full run here: https://api.wandb.ai/links/callum-mcdougall/4xtin05h
@@ -716,3 +719,90 @@ if MAIN:
     print(f"Entropy of training data = {entropy:.3f}")
 
 # %%
+
+
+def sampling_fn(model: DemoTransformer, prompt: str) -> str:
+    sampler = solutions.TransformerSampler(model, reference_gpt2.tokenizer)
+    output = sampler.sample(prompt, temperature=0.7, top_p=0.95, max_tokens_generated=16)
+    return output
+
+
+model = DemoTransformer(model_cfg).to(device)
+
+# Should be entirely random, because it uses a newly initialized model
+print(sampling_fn(model, prompt="John and Mary went to the"))
+
+# %%
+
+
+@dataclass
+class TransformerTrainingArgsLogText(TransformerTrainingArgs):
+    text_sample_freq: int = 20
+    table_log_freq: int = 200
+
+    def __post_init__(self):
+        assert (
+            self.table_log_freq >= self.text_sample_freq
+        ), "You should log the table less frequently than you add text to it."
+
+class TransformerTrainerLogText(TransformerTrainer[TransformerTrainingArgsLogText]):
+    def train_log_text(self, sampling_fn: Callable, prompt_list: list[str]):
+        """
+        Trains the model, for `self.args.epochs`. Also handles wandb initialisation, and early stopping
+        for each epoch at `self.args.max_steps_per_epoch` steps.
+
+        This also takes 2 extra arguments:
+            sampling_fn: function which takes model & a single prompt (i.e. text string) and teruns the text string output
+            prompt_list: list of prompts we'll log output on
+        """
+        wandb.init(project=self.args.wandb_project, name=self.args.wandb_name, config=self.args)
+        accuracy = np.nan
+        progress_bar = tqdm(total=self.args.max_steps_per_epoch * self.args.epochs)
+
+        # Create a list for storing data
+        completions_list = []
+
+        for epoch in range(self.args.epochs):
+            for i, batch in enumerate(self.train_loader):
+                loss = self.training_step(batch)
+                progress_bar.update()
+                progress_bar.set_description(f"Epoch {epoch+1}, loss: {loss:.3f}, accuracy: {accuracy:.3f}")
+
+                # Control the adding of the text to the table, and the logging of text
+                if self.step % self.args.text_sample_freq == 0:
+                    text_completions = [sampling_fn(self.model, prompt) for prompt in prompt_list]
+                    completions_list.append([epoch, self.step, *text_completions])
+                
+                if self.step % self.args.table_log_freq == 0:
+                    wandb.log({
+                        "completions_table": wandb.Table(
+                            data=completions_list,
+                            columns=["epoch", "step", 
+                                    *[f"prompt_{i}" for i in range(len(prompt_list))]]
+                    )})
+                
+                if i >= self.args.max_steps_per_epoch:
+                    break
+            
+            accuracy = self.evaluate()
+        
+        wandb.finish()
+
+# %%
+
+
+prompt_list = [
+    "Eliezer Shlomo Yudkowsky (born September 11, 1979) is an American decision and artificial intelligence (AI) theorist and writer, best known for",
+    "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English.",
+    "John and Mary went to the",
+]
+
+model = DemoTransformer(model_cfg).to(device)
+args = TransformerTrainingArgsLogText()
+trainer = TransformerTrainerLogText(args, model)
+trainer.train_log_text(sampling_fn, prompt_list)
+# Read full report here - https://api.wandb.ai/links/callum-mcdougall/5ex16e5w
+
+# %%
+
+
