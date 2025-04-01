@@ -746,7 +746,7 @@ class TransformerTrainingArgsLogText(TransformerTrainingArgs):
         ), "You should log the table less frequently than you add text to it."
 
 class TransformerTrainerLogText(TransformerTrainer[TransformerTrainingArgsLogText]):
-    def train_log_text(self, sampling_fn: Callable, prompt_list: list[str]):
+    def train_log_text(self, sampling_fn: Callable[[DemoTransformer, str], str], prompt_list: list[str]):
         """
         Trains the model, for `self.args.epochs`. Also handles wandb initialisation, and early stopping
         for each epoch at `self.args.max_steps_per_epoch` steps.
