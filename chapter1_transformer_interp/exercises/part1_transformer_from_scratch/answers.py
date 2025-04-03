@@ -26,6 +26,8 @@ from transformer_lens import HookedTransformer
 from transformer_lens.utils import gelu_new, tokenize_and_concatenate
 from transformers.models.gpt2.tokenization_gpt2_fast import GPT2TokenizerFast
 
+import time
+
 device = t.device("mps" if t.backends.mps.is_available() else "cuda" if t.cuda.is_available() else "cpu")
 
 # Make sure exercises are in the path
@@ -42,6 +44,7 @@ import part1_transformer_from_scratch.tests as tests
 from plotly_utils import imshow
 
 MAIN = __name__ == "__main__"
+TRAIN = False
 
 # %%
 
@@ -689,7 +692,7 @@ class TransformerTrainer(Generic[GenericArgs]):
 # %%
 
 
-if MAIN:
+if MAIN and TRAIN:
     # See the full run here: https://api.wandb.ai/links/callum-mcdougall/4xtin05h
     model = DemoTransformer(model_cfg).to(device)
     args = TransformerTrainingArgs()
@@ -790,18 +793,18 @@ class TransformerTrainerLogText(TransformerTrainer[TransformerTrainingArgsLogTex
 
 # %%
 
+if MAIN and TRAIN:
+    prompt_list = [
+        "Eliezer Shlomo Yudkowsky (born September 11, 1979) is an American decision and artificial intelligence (AI) theorist and writer, best known for",
+        "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English.",
+        "John and Mary went to the",
+    ]
 
-prompt_list = [
-    "Eliezer Shlomo Yudkowsky (born September 11, 1979) is an American decision and artificial intelligence (AI) theorist and writer, best known for",
-    "In a shocking finding, scientist discovered a herd of unicorns living in a remote, previously unexplored valley, in the Andes Mountains. Even more surprising to the researchers was the fact that the unicorns spoke perfect English.",
-    "John and Mary went to the",
-]
-
-model = DemoTransformer(model_cfg).to(device)
-args = TransformerTrainingArgsLogText()
-trainer = TransformerTrainerLogText(args, model)
-trainer.train_log_text(sampling_fn, prompt_list)
-# Read full report here - https://api.wandb.ai/links/callum-mcdougall/5ex16e5w
+    model = DemoTransformer(model_cfg).to(device)
+    args = TransformerTrainingArgsLogText()
+    trainer = TransformerTrainerLogText(args, model)
+    trainer.train_log_text(sampling_fn, prompt_list)
+    # Read full report here - https://api.wandb.ai/links/callum-mcdougall/5ex16e5w
 
 # %%
 
@@ -1163,7 +1166,7 @@ class Beams:
     logprob_sums: Float[Tensor, "batch"]
     tokens: Int[Tensor, "batch seq"]
 
-    def __getitem__(self, batch_idx) -> "Beams":
+    def __getitem__(self, batch_idx: int) -> "Beams":
         """Allows you to create new beams from old beams by slicing along batch dim (useful for `filter`)."""
         return Beams(self.model, self.tokenizer, self.logprob_sums[batch_idx], self.tokens[batch_idx])
 
@@ -1184,6 +1187,13 @@ class Beams:
         of this length.
         """
         # Get the output logprobs for the next token (for every sequence in current beams)
+        # log probabilities l
+        #   l_i = log p_i
+        #       = log \frac{exp(x_i)}{\sum_j exp(x_j)}
+        #       = x_i - log \sum_j exp(x_j)
+        #
+        # Properties of Exponents and Logarithms:
+        # ln(e^x) = log_e (e^x) = x
         logprobs = self.model(self.tokens)[:, -1].log_softmax(-1)
 
         # Get the top `toks_per_beam` tokens for each sequence
@@ -1199,6 +1209,15 @@ class Beams:
         # [growing growing growing]   [up  older   my]
 
         new_tokens = t.concat([einops.repeat(self.tokens, "b s -> b k s", k=k), topk_tokenIDs.unsqueeze(-1)], dim=-1)
+        # [[a           [[kid
+        #   a             child
+        #   a      ],     little ],
+        #  [in           [the
+        #   in        +   college
+        #   in     ],     high   ],
+        #  [growing      [up
+        #   growing       older
+        #   growing]]     my     ]]
 
         return Beams(self.model, self.tokenizer, new_logprob_sums.flatten(), new_tokens.flatten(0,1))
 
@@ -1287,6 +1306,9 @@ if MAIN:
     # top_tokens (k)
 
     new_tokens = t.concat([tokens.repeat(3, 1), top_tokens.unsqueeze(-1)], dim=-1)
+    # [When I was   [a
+    #  When I was  + growing
+    #  When I was]   in]
 
     beams = Beams(model, tokenizer, logprob_sums=top_logprobs, tokens=new_tokens)
     beams.print()
@@ -1368,6 +1390,370 @@ if MAIN:
     # Print all the best output
     for logprob_sum, text in final_logitsums_and_completions:
         avg_logprob_as_prob = t.tensor(logprob_sum / (len(tokenizer.encode(text)) - orig_len)).exp()
+        #  / (len(tokenizer.encode(text)) - orig_len) 
+        #   gives the average log probability per token for the generated part
+        # .exp() function is applied to convert 
+        #   this average log probability 
+        #   back to the probability.
+        #   This essentially gives you the geometric mean
+        #   probability of the tokens generated
+        #   e^{ln(p)} = p
         rprint(f"Avg token prob = {avg_logprob_as_prob:.3f}\nBest output:\n[bold dark_orange]{text}")
+
+# %%
+
+
+# Define a type for a single layer's cache entry (useful for type checking in later functions)
+KeyValueCacheTensor = Float[Tensor, "2 batch seq_len n_heads d_head"]
+
+class KeyValueCache(Tensor):
+    '''
+    This class holds tensors of key and value vectors, to be used for caching.
+
+    If we define it using cfg and batch then it's initialized as empty, but
+    we can also define it from kv_cache_entries.
+    '''
+    @classmethod
+    def new_empty(cls, cfg: Config, batch: int = 1) -> "KeyValueCache":
+        '''
+        Doing a forward pass on a cache created in this way indicates "we don't
+        yet have a cache, but we want this forward pass to return a cache".
+        Whereas using cache=None in a forward pass indicates we don't want to
+        return a cache.
+        '''
+        shape = (cfg.n_layers, 2, batch, 0, cfg.n_heads, cfg.d_head)
+        return cls(*shape).to(device)
+
+    # Define a handful of properties, so they can be referenced directly rather than
+    # indexing (which is more likely to lead to mistakes)
+
+    @property
+    def k(self) -> Tensor:
+        return self[:, 0]
+
+    @property
+    def v(self) -> Tensor:
+        return self[:, 1]
+
+    @property
+    def batch(self) -> int:
+        return self.shape[2]
+
+    @property
+    def seq_len(self) -> int:
+        return self.shape[3]
+
+# %%
+
+
+if MAIN:
+    # Example implementation:
+    cfg = model.cfg
+    batch = 6
+    kv_cache = KeyValueCache.new_empty(cfg, batch)
+
+    print(f"Shape of all kv-cache = {tuple(kv_cache.shape)}")
+    print(f"Shape of just k-cache = {tuple(kv_cache.k.shape)}")
+    for kv_cache_entry in kv_cache:
+        print(f"Shape of cache entry for one layer = {tuple(kv_cache_entry.shape)}")
+        break
+    print(f"Batch size = {kv_cache.batch}")
+    print(f"Current sequence length = {kv_cache.seq_len}")
+
+# %% New DemonTransformer components (and testing)
+
+
+# Define new model parts where necessary, and create a new model & test it
+# Note that sometimes our modules return a tuple of (tensor output, cache) rather than just output. The
+# tests have been built to accommodate this.
+
+
+class PosEmbedCache(nn.Module):
+    def __init__(self, cfg: Config):
+        super().__init__()
+        self.cfg = cfg
+        self.W_pos = nn.Parameter(t.empty((cfg.n_ctx, cfg.d_model)))
+        nn.init.normal_(self.W_pos, std=self.cfg.init_range)
+
+    def forward(
+        self,
+        tokens: Int[Tensor, "batch position"],
+        past_kv_pos_offset: int = 0
+    ) -> Float[Tensor, "batch position d_model"]:
+
+        batch, seq_len = tokens.shape
+        return einops.repeat(
+            self.W_pos[past_kv_pos_offset: seq_len+past_kv_pos_offset],
+            "seq d_model -> batch seq d_model",
+            batch=batch
+        )
+
+
+class AttentionCache(nn.Module):
+    IGNORE: Float[Tensor, ""]
+    BIAS: Float[Tensor, "query_pos key_pos"]
+
+    def __init__(self, cfg: Config):
+        super().__init__()
+        self.cfg = cfg
+        self.W_Q = nn.Parameter(t.empty((cfg.n_heads, cfg.d_model, cfg.d_head)))
+        self.W_K = nn.Parameter(t.empty((cfg.n_heads, cfg.d_model, cfg.d_head)))
+        self.W_V = nn.Parameter(t.empty((cfg.n_heads, cfg.d_model, cfg.d_head)))
+        self.W_O = nn.Parameter(t.empty((cfg.n_heads, cfg.d_head, cfg.d_model)))
+        self.b_Q = nn.Parameter(t.zeros((cfg.n_heads, cfg.d_head)))
+        self.b_K = nn.Parameter(t.zeros((cfg.n_heads, cfg.d_head)))
+        self.b_V = nn.Parameter(t.zeros((cfg.n_heads, cfg.d_head)))
+        self.b_O = nn.Parameter(t.zeros((cfg.d_model)))
+        nn.init.normal_(self.W_Q, std=self.cfg.init_range)
+        nn.init.normal_(self.W_K, std=self.cfg.init_range)
+        nn.init.normal_(self.W_V, std=self.cfg.init_range)
+        nn.init.normal_(self.W_O, std=self.cfg.init_range)
+        self.register_buffer("IGNORE", t.tensor(float("-inf"), dtype=t.float32, device=device))
+        self.register_buffer("BIAS", t.triu(t.ones(cfg.n_ctx, cfg.n_ctx, device=device), diagonal=1).bool())
+
+    def forward(
+        self,
+        normalized_resid_pre: Float[Tensor, "batch posn d_model"],
+        kv_cache_entry: KeyValueCacheTensor | None = None,
+    ) -> tuple[
+        Float[Tensor, "batch posn d_model"],
+        KeyValueCacheTensor | None
+    ]:
+        '''
+        Returns the result of applying attention layer to normlized_resid_pre, as well as
+        the new cached key and value vectors (which we get from concatenating the old cached
+        ones with the new key and value vectors).
+        '''
+        # Calculate the new query, key and value vectors
+        q = einops.einsum(
+            normalized_resid_pre, self.W_Q,
+            "batch posn d_model, nheads d_model d_head -> batch posn nheads d_head"
+        ) + self.b_Q
+        k = einops.einsum(
+            normalized_resid_pre, self.W_K,
+            "batch posn d_model, nheads d_model d_head -> batch posn nheads d_head"
+        ) + self.b_K
+        v = einops.einsum(
+            normalized_resid_pre, self.W_V,
+            "batch posn d_model, nheads d_model d_head -> batch posn nheads d_head"
+        ) + self.b_V
+
+        # If cache_entry is not None, this means we use the previous key and value vectors
+        # Also we'll need to get a new cache entry which will be used later to construct a new cache
+        if kv_cache_entry is not None:
+            k = t.concat([kv_cache_entry[0], k], dim=1)
+            v = t.concat([kv_cache_entry[1], v], dim=1)
+            kv_cache_entry = t.stack([k, v])
+
+        # Calculate attention scores, then scale and mask, and apply softmax to get probabilities
+        attn_scores = einops.einsum(
+            q, k,
+            "batch posn_Q nheads d_head, batch posn_K nheads d_head -> batch nheads posn_Q posn_K"
+        )
+        attn_scores_masked = self.apply_causal_mask(attn_scores=attn_scores / self.cfg.d_head ** 0.5)
+        attn_pattern = attn_scores_masked.softmax(dim=-1)
+
+        # Take weighted sum of value vectors, according to attention probabilities
+        z = einops.einsum(
+            attn_pattern, v,
+            "batch nheads posn_Q posn_K, batch posn_K nheads d_head -> batch nheads posn_Q d_head"
+        )
+
+        # Calculate output (by applying matrix W_O and summing over heads, then adding bias b_O)
+        out = einops.einsum(
+            z, self.W_O,
+            "batch nheads posn_Q d_head, nheads d_head d_model -> batch posn_Q d_model"
+        ) + self.b_O
+
+        return out, kv_cache_entry
+
+    def apply_causal_mask(
+        self, attn_scores: Float[Tensor, "batch n_heads query_pos key_pos"]
+    ) -> Float[Tensor, "batch n_heads query_pos key_pos"]:
+        '''
+        Here, attn_scores have shape (batch, n_heads, query_pos, key_pos), 
+        where query_pos represents the new (non-cached) positions, 
+        and key_pos represent all the positions (cached and non-cached).
+
+        So when we create our mask, the query indices 
+        and key indices will both go up to the same value
+        (the full sequence length), but the query indices will start at >0.
+        '''
+        query_pos, key_pos = attn_scores.shape[-2:]
+        if query_pos == 1:
+            return attn_scores
+        # Define a mask that is True for all positions we want to set probabilities to zero for
+        mask = self.BIAS[:query_pos, :key_pos]
+        # Apply the mask to attention scores, then return the masked scores
+        attn_scores.masked_fill_(mask, self.IGNORE)
+        return attn_scores
+
+        # version 1:
+        # query_pos, key_pos = attn_scores.shape[-2:]
+        # assert query_pos <= key_pos
+        # q_posn = einops.repeat(
+        #     attn_scores.new_tensor(range(key_pos-query_pos, key_pos)), 
+        #     "q -> q k", 
+        #     k=key_pos)
+        # k_posn = einops.repeat(attn_scores.new_tensor(range(key_pos)), "k -> q k", q=query_pos)
+        # mask = q_posn < k_posn
+        # attn_scores = attn_scores.masked_fill(mask, self.IGNORE)
+        # return attn_scores
+
+
+class TransformerBlockCache(nn.Module):
+    def __init__(self, cfg: Config):
+        super().__init__()
+        self.cfg = cfg
+        self.ln1 = LayerNorm(cfg)
+        self.attn = AttentionCache(cfg)
+        self.ln2 = LayerNorm(cfg)
+        self.mlp = MLP(cfg)
+
+    def forward(
+        self,
+        resid_pre: Float[Tensor, "batch position d_model"],
+        kv_cache_entry: KeyValueCacheTensor | None = None,
+    ) -> Float[Tensor, "batch position d_model"]:
+
+        attn_out, kv_cache_entry = self.attn(self.ln1(resid_pre), kv_cache_entry)
+        resid_mid = attn_out + resid_pre
+        resid_post = self.mlp(self.ln2(resid_mid)) + resid_mid
+        return resid_post, kv_cache_entry
+
+
+class DemoTransformerCache(nn.Module):
+    def __init__(self, cfg: Config):
+        super().__init__()
+        self.cfg = cfg
+        self.embed = Embed(cfg)
+        self.pos_embed = PosEmbedCache(cfg)
+        self.blocks = nn.ModuleList([TransformerBlockCache(cfg) for _ in range(cfg.n_layers)])
+        self.ln_final = LayerNorm(cfg)
+        self.unembed = Unembed(cfg)
+
+    def forward(
+        self,
+        tokens: Int[Tensor, "batch seq_pos"],
+        kv_cache: KeyValueCache | None = None
+    ) -> tuple[Float[Tensor, "batch position d_vocab"], KeyValueCache | None]:
+
+        using_kv_cache = kv_cache is not None
+
+        if using_kv_cache:
+            # If using kv_cache, then we only need to pass forward the newest tokens
+            # Remember to add positional offset!
+            n_cached_tokens_len = kv_cache.seq_len
+            tokens = tokens[:, n_cached_tokens_len:]
+            residual = self.embed(tokens) + self.pos_embed(tokens, n_cached_tokens_len)
+        else:
+            # If not using cache, turn it into a list of None's (so we can iterate through it)
+            kv_cache = [None for _ in range(self.cfg.n_layers)]
+            residual = self.embed(tokens) + self.pos_embed(tokens)
+
+        # Apply all layers, and create a (new) kv_cache from the key & value vectors
+        new_kv_cache_entries: list[KeyValueCacheTensor] = []
+        for block, kv_cache_entry in zip(self.blocks, kv_cache):
+            residual, kv_cache_entry = block(residual, kv_cache_entry)
+            if using_kv_cache: new_kv_cache_entries.append(kv_cache_entry)
+
+        logits = self.unembed(self.ln_final(residual))
+
+        if using_kv_cache:
+            return logits, KeyValueCache(t.stack(new_kv_cache_entries))
+        else:
+            return logits, None
+
+
+if MAIN:
+    tokens = reference_gpt2.to_tokens(reference_text).to(device)
+    logits, cache = reference_gpt2.run_with_cache(tokens)
+
+    rand_int_test(PosEmbedCache, [2, 4])
+    load_gpt2_test(PosEmbedCache, reference_gpt2.pos_embed, tokens)
+    rand_float_test(AttentionCache, [2, 4, 768])
+    load_gpt2_test(AttentionCache, reference_gpt2.blocks[0].attn, cache["normalized", 0, "ln1"])
+    rand_float_test(TransformerBlockCache, [2, 4, 768])
+    load_gpt2_test(TransformerBlockCache, reference_gpt2.blocks[0], cache["resid_pre", 0])
+    rand_int_test(DemoTransformerCache, [2, 4])
+    load_gpt2_test(DemoTransformerCache, reference_gpt2, tokens)
+
+# %%
+
+class TransformerSamplerCache(TransformerSampler):
+    @t.inference_mode()
+    def sample(
+        self,
+        prompt: str,
+        max_tokens_generated=100,
+        kv_cache: KeyValueCache | None = None,
+        verbose=False,
+        seed: int | None = None,
+        **kwargs
+    ) -> str:
+
+        self.model.eval()
+        input_ids = self.tokenizer.encode(prompt, return_tensors="pt").to(device)[0]
+        if seed is not None:
+            np.random.seed(seed)
+            t.manual_seed(seed)
+
+        for i in tqdm(range(max_tokens_generated)):
+            # Get new logits (make sure we don't pass in more tokens than the model's context length)
+            logits, kv_cache = self.model(input_ids[None, -self.cfg.n_ctx:], kv_cache)
+            # We only take logits for the last token, because this is what we're sampling
+            logits = logits[0, -1]
+            # Get next token (as a tensor of size (1, 1) so we can concat it to input_ids)
+            next_token = t.tensor([TransformerSampler.sample_next_token(input_ids, logits, **kwargs)], device=device)
+            # Create new input ids string, with shape (1, old_seq_len + 1)
+            input_ids = t.cat([input_ids, next_token], dim=-1)
+            # Print out results, if required
+            if verbose:
+                print(self.tokenizer.decode(input_ids), end="\r")
+            # If our new token was the end-of-text token, stop
+            if next_token == getattr(self.tokenizer, "eos_token_id", None):
+                break
+
+        return self.tokenizer.decode(input_ids)
+
+# %%
+
+if MAIN:
+    device = t.device("cuda") # can also try "cpu"
+
+    model = DemoTransformerCache(Config()).to(device)
+    model.load_state_dict(reference_gpt2.state_dict(), strict=False)
+
+    initial_text = "Eliezer Shlomo Yudkowsky (born September 11, 1979) is an American decision and artificial intelligence (AI) theorist and writer, best known for"
+    # input_ids = tokenizer.encode(initial_text, return_tensors="pt").squeeze()
+
+    sampler = TransformerSamplerCache(model, tokenizer)
+
+    # Run the noncached version
+    t0 = time.time()
+    text = sampler.sample(
+        initial_text,
+        temperature=0.7,
+        top_p=0.95,
+        seed=0,
+    )
+    print(f"Time taken (without cache): {time.time() - t0:.2f} seconds")
+    rprint(f"Model output:\n\n[bold dark_orange]{text}[/]")
+
+    # Run the cached version
+    t0 = time.time()
+    text_with_cache = sampler.sample(
+        initial_text,
+        temperature=0.7,
+        top_p=0.95,
+        seed=0,
+        kv_cache=KeyValueCache.new_empty(sampler.cfg)
+    )
+    print(f"Time taken (with cache): {time.time() - t0:.2f} seconds")
+    rprint(f"Model output:\n\n[bold dark_orange]{text_with_cache}[/]")
+
+    # # Check they are the same
+    assert text == text_with_cache, "Your outputs are different, meaning you've probably made a mistake in your cache implementation (or failed to use random seeds)."
+    print("Tests passed!")
 
 # %%
