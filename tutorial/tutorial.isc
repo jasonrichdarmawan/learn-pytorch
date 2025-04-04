@@ -1,0 +1,7 @@
+isc_project_id = "93fd04b1-f7e3-44d6-9a2d-b573740adeb2"
+experiment_name = "tutorial"
+gpu_type = "24GB VRAM GPU"
+gpus = 16
+output_path = "~/outputs/tutorial"
+compute_mode = "cycle"
+command = "source ~/.tutorial/bin/activate && cd ~/learn-pytorch/tutorial && python tutorial.py"

@@ -1,0 +1,1 @@
+[Strong Compute](https://strong-compute.gitbook.io/developer-docs/training-with-isc/deep-dive-tutorial)
