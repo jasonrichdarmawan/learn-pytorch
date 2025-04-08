@@ -31,10 +31,11 @@ import time
 device = t.device("mps" if t.backends.mps.is_available() else "cuda" if t.cuda.is_available() else "cpu")
 
 # Make sure exercises are in the path
+folder = "20-arena"
 chapter = "chapter1_transformer_interp"
 section = "part1_transformer_from_scratch"
 root_dir = Path(os.getcwd())
-exercises_dir = root_dir / chapter / "exercises"
+exercises_dir = root_dir / folder / chapter / "exercises"
 section_dir = exercises_dir / section
 if str(exercises_dir) not in sys.path:
     sys.path.append(str(exercises_dir))
