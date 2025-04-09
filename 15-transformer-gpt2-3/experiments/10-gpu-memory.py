@@ -5,33 +5,10 @@ batch = 64
 vocab_size = 50257
 n_embd = 768
 n_head = 12
-block_size = 2048
+block_size = 1024
 n_layer = 12
 
 MAIN = "__main__" == __name__
-
-# %%
-# Change me and/or run me again to see the results
-
-n_layer = 24
-n_embd = 1536
-
-if MAIN:
-    num_params = estimate_parameters_total(
-        vocab_size=vocab_size,
-        block_size=block_size,
-        n_embd=n_embd,
-        n_layer=n_layer
-    )
-    estimated_vram_usage_total = estimate_vram_usage_total(
-        batch=batch,
-        n_head=n_head,
-        block_size=block_size,
-        n_embd=n_embd,
-        num_params=num_params
-    )
-    print(f"Number of parameters: {num_params:,}")
-    print(f"Estimated VRAM usage total: {estimated_vram_usage_total:.2f} GB")
 
 # %%
 
@@ -46,7 +23,7 @@ def estimate_parameters_word_embeddings(vocab_size: int, n_embd: int) -> int:
     return vocab_size * n_embd
 
 if MAIN:
-    estimate_parameters_word_embeddings(vocab_size=vocab_size, n_embd=n_embd)
+    print(f"Estimated parameters word embeddings: {estimate_parameters_word_embeddings(vocab_size=vocab_size, n_embd=n_embd):,}")
 
 # %%
 
@@ -112,7 +89,40 @@ if MAIN:
 
 # %%
 
-def estimate_vram_usage_attention_scores(batch: int, n_head: int, block_size: int) -> float:
+def estimate_vram_usage_activations_word_embeddings(batch: int, block_size: int, n_embd: int) -> float:
+    """
+    Calculate the estimated VRAM usage for word embeddings.
+    :param batch: Batch size
+    :param vocab_size: Vocabulary size
+    :param n_embd: Embedding size
+    :return: Estimated VRAM usage in gigabytes
+    """
+    # Word embeddings have a matrix of size (vocab_size, n_embd)
+    # Each embedding is a float32 (4 bytes)
+    return batch * block_size * n_embd * 4 / 1e9
+
+if MAIN:
+    print(f"Estimated VRAM usage word embeddings: {estimate_vram_usage_activations_word_embeddings(batch=batch, block_size=block_size, n_embd=n_embd):.2f} GB")
+
+# %%
+
+def estimate_vram_usage_activations_positional_encoding(block_size: int, n_embd: int) -> float:
+    """
+    Calculate the estimated VRAM usage for positional encoding.
+    :param block_size: Block size
+    :param n_embd: Embedding size
+    :return: Estimated VRAM usage in gigabytes
+    """
+    # Positional encoding has a matrix of size (block_size, n_embd)
+    # Each positional encoding is a float32 (4 bytes)
+    return block_size * n_embd * 4 / 1e9
+
+if MAIN:
+    print(f"Estimated VRAM usage positional encoding: {estimate_vram_usage_activations_positional_encoding(block_size=block_size, n_embd=n_embd):.3f} GB")
+
+# %%
+
+def estimate_vram_usage_activations_attention_scores(batch: int, n_head: int, block_size: int) -> float:
     """
     Calculate the estimated VRAM usage for attention scores.
     :param batch: Batch size
@@ -125,11 +135,11 @@ def estimate_vram_usage_attention_scores(batch: int, n_head: int, block_size: in
     return batch * n_head * block_size * block_size * 4 / 1e9
 
 if MAIN:
-    estimate_vram_usage_attention_scores(batch=batch, n_head=n_head, block_size=block_size)
+    estimate_vram_usage_activations_attention_scores(batch=batch, n_head=n_head, block_size=block_size)
 
 # %%
 
-def estimate_vram_usage_ffn(batch: int, block_size: int, n_embd: int) -> float:
+def estimate_vram_usage_activations_ffn(batch: int, block_size: int, n_embd: int) -> float:
     """
     Calculate the estimated VRAM usage for feedforward networks (FFN).
     :param batch: Batch size
@@ -143,11 +153,44 @@ def estimate_vram_usage_ffn(batch: int, block_size: int, n_embd: int) -> float:
     return batch * block_size * (4 * n_embd) * 4 / 1e9
 
 if MAIN:
-    estimate_vram_usage_ffn(batch=batch, block_size=block_size, n_embd=n_embd)
+    estimate_vram_usage_activations_ffn(batch=batch, block_size=block_size, n_embd=n_embd)
 
 # %%
 
-def estimate_vram_usage_parameter(num_params: int) -> float:
+def estimate_vram_usage_activations_layer_norm(batch: int, block_size: int, n_embd: int) -> float:
+    """
+    Calculate the estimated VRAM usage for final layer normalization.
+    :param batch: Batch size
+    :param block_size: Block size
+    :param n_embd: Embedding size
+    :return: Estimated VRAM usage in gigabytes
+    """
+    # Final layer normalization has a matrix of size (batch, n_embd)
+    # Each weight is a float32 (4 bytes)
+    return batch * block_size * n_embd * 4 / 1e9
+
+if MAIN:
+    print(f"Estimated VRAM usage LayerNorm: {estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd):.2f} GB")
+
+# %%
+
+def estimate_vram_usage_activations_final_linear(batch: int, block_size: int, vocab_size: int) -> float:
+    """
+    Calculate the estimated VRAM usage for the final linear layer.
+    :param batch: Batch size
+    :param n_embd: Embedding size
+    :return: Estimated VRAM usage in gigabytes
+    """
+    # Final linear layer has a matrix of size (batch, n_embd)
+    # Each weight is a float32 (4 bytes)
+    return batch * block_size * vocab_size * 4 / 1e9
+
+if MAIN:
+    print(f"Estimated VRAM usage final linear: {estimate_vram_usage_activations_final_linear(batch=batch, block_size=block_size, vocab_size=vocab_size):.2f} GB")
+
+# %%
+
+def estimate_vram_usage_parameters(num_params: int) -> float:
     """
     Calculate the estimated VRAM usage for model parameters.
     :param num_params: Number of parameters
@@ -157,7 +200,7 @@ def estimate_vram_usage_parameter(num_params: int) -> float:
     return num_params * 4 / 1e9
 
 if MAIN:
-    estimate_vram_usage_parameter(num_params=num_params)
+    print(f"Estimated VRAM usage parameters: {estimate_vram_usage_parameters(num_params=num_params)}")
 
 # %%
 
@@ -190,37 +233,130 @@ if MAIN:
 
 # %%
 
-def estimate_vram_usage_total(
+def estimate_vram_usage_training_total(
     batch: int,
     n_head: int,
     block_size: int,
     n_embd: int,
+    n_layer: int,
     num_params: int
 ) -> float:
     """
-    Calculate the total estimated VRAM usage.
+    Calculate the estimated VRAM usage during training.
     :param batch: Batch size
     :param n_head: Number of attention heads
     :param block_size: Block size
     :param n_embd: Embedding size
+    :param n_layer: Number of transformer layers
     :param num_params: Number of parameters
-    :return: Total estimated VRAM usage in gigabytes
+    :return: Estimated VRAM usage in gigabytes
     """
     return (
-        estimate_vram_usage_attention_scores(batch, n_head, block_size) +
-        estimate_vram_usage_ffn(batch, block_size, n_embd) +
-        estimate_vram_usage_parameter(num_params) +
+        estimate_vram_usage_activations_word_embeddings(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_positional_encoding(block_size=block_size, n_embd=n_embd)
+    ) + (
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_attention_scores(batch, n_head, block_size) +
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_ffn(batch, block_size, n_embd)
+    ) * n_layer + (
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_final_linear(batch=batch, block_size=block_size, vocab_size=vocab_size) +
+        estimate_vram_usage_parameters(num_params) +
         estimate_vram_usage_gradient(num_params) +
         estimate_vram_usage_optimizer(num_params)
-    ) * n_layer
+    )
 
 if MAIN:
-    estimate_vram_usage_total(
+    estimated_vram_usage_training_total = estimate_vram_usage_training_total(
         batch=batch,
         n_head=n_head,
         block_size=block_size,
         n_embd=n_embd,
+        n_layer=n_layer,
         num_params=num_params
     )
+    print(f"Estimated VRAM usage training total: {estimated_vram_usage_training_total:.2f} GB")
 
+# %%
+
+def estimate_vram_usage_inference_total(
+    batch: int,
+    n_head: int,
+    block_size: int,
+    n_embd: int,
+    n_layer: int,
+    num_params: int
+) -> float:
+    """
+    Calculate the estimated VRAM usage during inference.
+    :param batch: Batch size
+    :param n_head: Number of attention heads
+    :param block_size: Block size
+    :param n_embd: Embedding size
+    :param n_layer: Number of transformer layers
+    :param num_params: Number of parameters
+    :return: Estimated VRAM usage in gigabytes
+    """
+    return (
+        estimate_vram_usage_activations_word_embeddings(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_positional_encoding(block_size=block_size, n_embd=n_embd)
+    ) + (
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_attention_scores(batch, n_head, block_size) +
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_ffn(batch, block_size, n_embd)
+    ) * n_layer + (
+        estimate_vram_usage_activations_layer_norm(batch=batch, block_size=block_size, n_embd=n_embd) +
+        estimate_vram_usage_activations_final_linear(batch=batch, block_size=block_size, vocab_size=vocab_size) +
+        estimate_vram_usage_parameters(num_params)
+    )
+    # No gradients or optimizer states needed during inference
+
+if MAIN:
+    estimated_vram_usage_inference_total = estimate_vram_usage_inference_total(
+        batch=1,
+        n_head=n_head,
+        block_size=block_size,
+        n_embd=n_embd,
+        n_layer=n_layer,
+        num_params=num_params
+    )
+    print(f"Estimated VRAM usage inference total: {estimated_vram_usage_inference_total:.2f} GB")
+
+# %%
+# Change me and/or run me again to see the results
+
+# Monet 850 million parameters
+# Calculated based on GPT-2 architecture
+n_layer = 24
+n_embd = 1536
+block_size = 2048
+
+if MAIN:
+    num_params = estimate_parameters_total(
+        vocab_size=vocab_size,
+        block_size=block_size,
+        n_embd=n_embd,
+        n_layer=n_layer
+    )
+    estimated_vram_usage_training_total = estimate_vram_usage_training_total(
+        batch=batch,
+        n_head=n_head,
+        block_size=block_size,
+        n_embd=n_embd,
+        n_layer=n_layer,
+        num_params=num_params
+    )
+    estimated_vram_usage_inference_total = estimate_vram_usage_inference_total(
+        batch=1,
+        n_head=n_head,
+        block_size=block_size,
+        n_embd=n_embd,
+        n_layer=n_layer,
+        num_params=num_params
+    )
+    print(f"Number of parameters: {num_params:,}")
+    print(f"Estimated VRAM usage training total: {estimated_vram_usage_training_total:.2f} GB")
+    print(f"Estimated VRAM usage inference total: {estimated_vram_usage_inference_total:.2f} GB")
 # %%
