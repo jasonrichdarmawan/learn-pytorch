@@ -206,8 +206,8 @@ class FileL2(FileL1):
     """
 
     def __init__(self, file_name: str, size: int, timestamp: Optional[int] = None, ttl: Optional[int] = None):
-        self.timestamp = timestamp
         super().__init__(file_name, size)
+        self.timestamp = timestamp
         self.ttl = ttl
 
     def __repr__(self):
@@ -241,12 +241,12 @@ class FileHostingServiceL3(FileHostingServiceL2[FL2, FF2]):
         factory_args = {"file_name": file_part, "size": file_size, "timestamp": timestamp, "ttl": ttl}
         file_obj = self._file_factory(**factory_args)
 
-        self._store_file(current_dir, file_name, file_obj)
+        self._store_file(current_dir, file_part, file_obj)
 
     def file_get_at(self, timestamp: float, file_name: str) -> Optional[int]:
         current_dir, file_part = self._resolve_path(file_name)
 
-        file = current_dir.files.get(file_name, None)
+        file = current_dir.files.get(file_part, None)
         if file is None:
             print(f"File {file_name} does not exist.")
             return None
@@ -270,9 +270,9 @@ class FileHostingServiceL3(FileHostingServiceL2[FL2, FF2]):
 
         self._check_pre_copy_l3(timestamp=timestamp, 
                                 source_dir=source_dir,
-                                source_part=file_from,
+                                source_part=source_part,
                                 dest_dir=dest_dir,
-                                dest_part=file_to)
+                                dest_part=dest_part)
 
         source_file = source_dir.files[source_part]
         factory_args = {"file_name": dest_part, "size": source_file.size, "timestamp": timestamp}
@@ -286,21 +286,30 @@ class FileHostingServiceL3(FileHostingServiceL2[FL2, FF2]):
         """
         current_dir, file_part = self._resolve_path(prefix)
 
-        matching_files: list[tuple[int, str]] = []
-        for file_name, file in current_dir.files.items():
-            if file_name.startswith(file_part) and file.is_alive(timestamp):
-                heapq.heappush(matching_files, (-file.size, file_name))
+        # version 1: no heapq
+        matching_files: list[FL2] = [
+            file for file_name, file in current_dir.files.items()
+            if file_name.startswith(file_part) and file.is_alive(timestamp)
+        ]
+        matching_files.sort(key=lambda file: (-file.size, file.file_name))
+        return matching_files[:10]
 
-        # Get the top 10 results
-        top_10: list[tuple[str, int]] = []
-        count = 0
-        while matching_files and count < 10:
-            neg_size, name = heapq.heappop(matching_files)
-            # heappop returns the smallest item
-            top_10.append((name, -neg_size))
-            count += 1
+        # version 2: using heapq
+        # matching_files: list[tuple[int, str]] = []
+        # for file_name, file in current_dir.files.items():
+        #     if file_name.startswith(file_part) and file.is_alive(timestamp):
+        #         heapq.heappush(matching_files, (-file.size, file_name))
+
+        # # Get the top 10 results
+        # top_10: list[tuple[str, int]] = []
+        # count = 0
+        # while matching_files and count < 10:
+        #     neg_size, name = heapq.heappop(matching_files)
+        #     # heappop returns the smallest item
+        #     top_10.append((name, -neg_size))
+        #     count += 1
         
-        return top_10
+        # return top_10
 
 if MAIN:
     factory = FileFactoryL2()
