@@ -13,7 +13,10 @@ class FileL1:
         self.file_name = file_name
         self.size = size
 
-FL1 = TypeVar('F', bound=FileL1)
+    def __repr__(self):
+        return f"FileL1({self.file_name=}, {self.size=})"
+
+FL1 = TypeVar('FL1', bound=FileL1)
 
 class Directory(Generic[FL1]):
     def __init__(self):
@@ -23,17 +26,17 @@ class Directory(Generic[FL1]):
 class FileFactory(Protocol[FL1]):
     def __call__(self, *args, **kwargs) -> FL1: ...
 
-FF = TypeVar('FF', bound=FileFactory)
-
 class FileFactoryL1(FileFactory[FileL1]):
     def __call__(self, file_name: str, size: int) -> FileL1:
         print(f"Creating FileL1 instance: {file_name} ({size} bytes)")
         return FileL1(file_name, size)
 
-class FileHostingServiceL1(Generic[FL1, FF]):
-    def __init__(self, file_factory: FF):
+FF1 = TypeVar('FF1', bound=FileFactoryL1)
+
+class FileHostingServiceL1(Generic[FL1, FF1]):
+    def __init__(self, file_factory: FF1):
         self.root = Directory[FL1]()
-        self.file_factory = file_factory
+        self._file_factory = file_factory
 
     def _resolve_path(self, file_name: str) -> tuple[Directory[FL1], str]:
         parts = file_name.split("/")
@@ -41,16 +44,13 @@ class FileHostingServiceL1(Generic[FL1, FF]):
         current_dir = self.root
         for part in dir_parts:
             if part not in current_dir.subdirectories:
-                current_dir.subdirectories[part] = Directory()
+                current_dir.subdirectories[part] = Directory[FL1]()
             current_dir = current_dir.subdirectories[part]
         return current_dir, file_part
 
     def _check_pre_upload(self, current_dir: Directory[FL1], file_part: str) -> None:
         if file_part in current_dir.files:
             raise RuntimeError(f"File {file_part} already exists (L1 check).")
-
-    def _create_file_obj(self, **factory_args) -> FL1:
-        return self.file_factory(**factory_args)
 
     def _store_file(self, current_dir: Directory[FL1], file_part: str, file: FL1):
         current_dir.files[file_part] = file
@@ -67,7 +67,7 @@ class FileHostingServiceL1(Generic[FL1, FF]):
         self._check_pre_upload(current_dir, file_part)
         
         factory_args = {"file_name": file_part, "size": size}
-        file_obj = self._create_file_obj(**factory_args)
+        file_obj = self._file_factory(**factory_args)
         
         # Upload the file to the remote storage server
         self._store_file(current_dir, file_part, file_obj)
@@ -139,30 +139,37 @@ if MAIN:
 
 # %% Level 2
 
-class FileHostingServiceL2(FileHostingServiceL1[FL1, FF]):
+class FileHostingServiceL2(FileHostingServiceL1[FL1, FF1]):
     def __init__(self, file_factory):
         super().__init__(file_factory=file_factory)
 
-    def file_search(self, prefix: str):
+    def file_search(self, prefix: str) -> list[FL1]:
         """
         - Find top 10 files starting with the provided prefix. Order results by their size in descending order, and in case of a tie by file name.
         """
         current_dir, file_part = self._resolve_path(prefix)
-
+    
+        # version 1: no heapq
+        # matching_files = [
+        #     file for file_name, file in current_dir.files.items()
+        #     if file_name.startswith(file_part)
+        # ]
+        # matching_files.sort(key=lambda file: (-file.size, file.file_name))
+        # return matching_files[:10]
+    
+        # version 2
         matching_files: list[tuple[int, str]] = []
         for file_name, file in current_dir.files.items():
             if file_name.startswith(file_part):
-                heapq.heappush(matching_files, (-file.size, file_name))
-            
+                heapq.heappush(matching_files, (-file.size, file_name, file))
         # Get the top 10 results
-        top_10: list[tuple[str, int]] = []
+        top_10: list[FL1] = []
         count = 0
         while matching_files and count < 10:
-            neg_size, name = heapq.heappop(matching_files)
+            _, _, file = heapq.heappop(matching_files)
             # heappop returns the smallest item
-            top_10.append((name, -neg_size))
+            top_10.append(file)
             count += 1
-        
         return top_10
     
 if MAIN:
@@ -217,8 +224,9 @@ class FileFactoryL2(FileFactory[FileL2]):
         return FileL2(file_name=file_name, size=size, timestamp=timestamp, ttl=ttl)
 
 FL2 = TypeVar('FL2', bound=FileL2)
+FF2 = TypeVar('FF2', bound=FileFactoryL2)
 
-class FileHostingServiceL3(FileHostingServiceL2[FL2, FF]):
+class FileHostingServiceL3(FileHostingServiceL2[FL2, FF2]):
     def __init__(self, file_factory):
         super().__init__(file_factory=file_factory)
 
@@ -231,7 +239,7 @@ class FileHostingServiceL3(FileHostingServiceL2[FL2, FF]):
         self._check_pre_upload(current_dir, file_part)
 
         factory_args = {"file_name": file_part, "size": file_size, "timestamp": timestamp, "ttl": ttl}
-        file_obj = self._create_file_obj(**factory_args)
+        file_obj = self._file_factory(**factory_args)
 
         self._store_file(current_dir, file_name, file_obj)
 
@@ -268,11 +276,11 @@ class FileHostingServiceL3(FileHostingServiceL2[FL2, FF]):
 
         source_file = source_dir.files[source_part]
         factory_args = {"file_name": dest_part, "size": source_file.size, "timestamp": timestamp}
-        copied_file = self._create_file_obj(**factory_args)
+        copied_file = self._file_factory(**factory_args)
         self._store_file(dest_dir, dest_part, copied_file)
         print("L3 Copied {file_from} to {file_to} at timestamp {timestamp}")
 
-    def file_search_at(self, timestamp: float, prefix: str):
+    def file_search_at(self, timestamp: float, prefix: str) -> list[FL2]:
         """
         - Results should only include files that are still "alive"
         """
@@ -322,7 +330,7 @@ if MAIN:
 
 # %% Level 4
 
-class FileHostingServiceL4(FileHostingServiceL3[FL2, FF]):
+class FileHostingServiceL4(FileHostingServiceL3[FL2, FF2]):
     def __init__(self, file_factory):
         super().__init__(file_factory=file_factory)
     
