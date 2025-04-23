@@ -349,6 +349,7 @@ def induction_attn_detector(cache: ActivationCache) -> list[str]:
             attention_pattern = cache["pattern", layer][head]
             # take avg of (-seq_len+1)-offset elements
             seq_len = (attention_pattern.shape[-1] - 1) // 2
+            # (101 - 1) // 2 = 50
             score = attention_pattern.diagonal(-seq_len + 1).mean()
             if score > 0.4:
                 attn_heads.append(f"{layer}.{head}")
@@ -356,5 +357,388 @@ def induction_attn_detector(cache: ActivationCache) -> list[str]:
 
 if MAIN:
     print("Induction heads = ", ", ".join(induction_attn_detector(rep_cache)))
+
+# %%
+
+if MAIN:
+    print(utils.get_act_name("pattern", 0))
+
+# %%
+
+if MAIN:
+    seq_len = 50
+    batch_size = 10
+    rep_tokens_10 = generate_repeated_tokens(model, seq_len, batch_size)
+
+    # We make a tensor to store the induction score for each head.
+    # We put it on the model's device to avoid needing to move things between the GPU and CPU, which can be slow.
+    induction_score_store = t.zeros((model.cfg.n_layers, model.cfg.n_heads), device=model.cfg.device)
+
+
+    def induction_score_hook(pattern: Float[Tensor, "batch head_index dest_pos source_pos"], hook: HookPoint):
+        """
+        Calculates the induction score, and stores it in the [layer, head] position of the `induction_score_store` tensor.
+        """
+        # Take the diagonal of attn paid from each dest posn to src posns (seq_len-1) tokens back
+        # (This only has entries for tokens with index>=seq_len)
+        induction_stripe = pattern.diagonal(dim1=-2, dim2=-1, offset=1 - seq_len)
+        # Get an average score per head
+        induction_score = einops.reduce(induction_stripe, "batch head_index position -> head_index", "mean")
+        # mean over the head_index dimension
+        # Store the result.
+        induction_score_store[hook.layer(), :] = induction_score
+
+
+    # We make a boolean filter on activation names, that's true only on attention pattern names
+    pattern_hook_names_filter = lambda name: name.endswith("pattern")
+
+    # Run with hooks (this is where we write to the `induction_score_store` tensor`)
+    model.run_with_hooks(
+        rep_tokens_10,
+        return_type=None,  # For efficiency, we don't need to calculate the logits
+        fwd_hooks=[(pattern_hook_names_filter, induction_score_hook)],
+    )
+
+    # Plot the induction scores for each head in each layer
+    imshow(
+        induction_score_store,
+        labels={"x": "Head", "y": "Layer"},
+        title="Induction Score by Head",
+        text_auto=".2f",
+        width=900,
+        height=350,
+    )
+
+# %%
+
+def visualize_pattern_hook(
+    pattern: Float[Tensor, "batch head_index dest_pos source_pos"],
+    hook: HookPoint,
+):
+    print("Layer: ", hook.layer())
+    display(cv.attention.attention_patterns(tokens=gpt2_small.to_str_tokens(rep_tokens[0]), attention=pattern.mean(0)))
+
+
+# YOUR CODE HERE - find induction heads in gpt2_small
+if MAIN:
+    seq_len = 50
+    batch_size = 10
+    rep_tokens_batch = generate_repeated_tokens(gpt2_small, seq_len, batch_size)
+
+    induction_score_store = t.zeros((gpt2_small.cfg.n_layers, gpt2_small.cfg.n_heads), device=gpt2_small.cfg.device)
+
+    gpt2_small.run_with_hooks(
+        rep_tokens_batch,
+        return_type=None,  # For efficiency, we don't need to calculate the logits
+        fwd_hooks=[(pattern_hook_names_filter, induction_score_hook)],
+    )
+
+    imshow(
+        induction_score_store,
+        labels={"x": "Head", "y": "Layer"},
+        title="Induction Score by Head",
+        text_auto=".1f",
+        width=700,
+        height=500,
+    )
+
+    # Observation: heads 5.1, 5.5, 6.9, 7.2, 7.10 are all strongly induction-y.
+    # Confirm observation by visualizing attn patterns for layers 5 through 7:
+
+    induction_head_layers = [5, 6, 7]
+    fwd_hooks = [
+        (utils.get_act_name("pattern", head_layer), visualize_pattern_hook)
+        for head_layer in induction_head_layers
+    ]
+    gpt2_small.run_with_hooks(
+        rep_tokens,
+        return_type=None,
+        fwd_hooks=fwd_hooks,
+    )
+
+# %%
+
+def logit_attribution(
+    embed: Float[Tensor, "seq d_model"],
+    l1_results: Float[Tensor, "seq nheads d_model"],
+    l2_results: Float[Tensor, "seq nheads d_model"],
+    W_U: Float[Tensor, "d_model d_vocab"],
+    tokens: Int[Tensor, "seq"],
+) -> Float[Tensor, "seq-1 n_components"]:
+    """
+    Inputs:
+        embed: the embeddings of the tokens (i.e. token + position embeddings)
+        l1_results: the outputs of the attention heads at layer 1 (with head as one of the dimensions)
+        l2_results: the outputs of the attention heads at layer 2 (with head as one of the dimensions)
+        W_U: the unembedding matrix
+        tokens: the token ids of the sequence
+
+    Returns:
+        Tensor of shape (seq_len-1, n_components)
+        represents the concatenation (along dim=-1) of logit attributions from:
+            the direct path (seq-1,1)
+            layer 0 logits (seq-1, n_heads)
+            layer 1 logits (seq-1, n_heads)
+        so n_components = 1 + 2*n_heads
+    """
+    W_U_correct_tokens = W_U[:, tokens[1:]]
+
+    direct_attributions = einops.einsum(W_U_correct_tokens, embed[:-1], "emb seq, seq emb -> seq")
+    # embed @ W_U
+    l1_attributions = einops.einsum(W_U_correct_tokens, l1_results[:-1], "emb seq, seq nhead emb -> seq nhead")
+    # attn_out @ W_U
+    l2_attributions = einops.einsum(W_U_correct_tokens, l2_results[:-1], "emb seq, seq nhead emb -> seq nhead")
+    # attn_out_1 @ W_U
+    return t.concat([direct_attributions.unsqueeze(-1), l1_attributions, l2_attributions], dim=-1)
+    # residual = embed + attn_out_0 + attn_out_1
+    # logits = residual @ W_U
+    #        = (embed @ W_U) + (attn_out_0 @ W_U) + (attn_out_1 @ W_U)
+
+
+if MAIN:
+    text = "We think that powerful, significantly superhuman machine intelligence is more likely than not to be created this century. If current machine learning techniques were scaled up to this level, we think they would by default produce systems that are deceptive or manipulative, and that no solid plans are known for how to avoid this."
+    logits, cache = model.run_with_cache(text, remove_batch_dim=True)
+    str_tokens = model.to_str_tokens(text)
+    tokens = model.to_tokens(text) # shape: (batch, seq_len)
+
+    with t.inference_mode():
+        embed = cache["embed"]
+        l1_results = cache["result", 0]
+        l2_results = cache["result", 1]
+        logit_attr = logit_attribution(embed, l1_results, l2_results, model.W_U, tokens[0])
+        # Uses fancy indexing to get a len(tokens[0])-1 length tensor, where the kth entry is the predicted logit for the correct k+1th token
+        correct_token_logits = logits[0, t.arange(len(tokens[0]) - 1), tokens[0, 1:]]
+        # t.arange(len(tokens[0]) - 1) means we remove the final element of the output (logits)
+        # tokens[0, 1:] means remove the first element of the input (bos_token)
+        t.testing.assert_close(logit_attr.sum(1), correct_token_logits, atol=1e-3, rtol=0)
+        print("Tests passed!")
+
+# %%
+
+if MAIN:
+    embed = cache["embed"]
+    l1_results = cache["result", 0]
+    l2_results = cache["result", 1]
+    logit_attr = logit_attribution(embed, l1_results, l2_results, model.W_U, tokens.squeeze())
+
+    plot_logit_attribution(model, logit_attr, tokens, title="Logit attribution (demo prompt)")
+
+# %%
+
+if MAIN:
+    # YOUR CODE HERE - plot logit attribution for the induction sequence (i.e. using `rep_tokens` and `rep_cache`), and
+    # interpret the results.
+    seq_len = 50
+
+    embed = rep_cache["embed"]
+    l1_results = rep_cache["result", 0]
+    l2_results = rep_cache["result", 1]
+
+    logit_attr = logit_attribution(embed, l1_results, l2_results, model.W_U, rep_tokens.squeeze())
+    plot_logit_attribution(model, logit_attr, rep_tokens.squeeze(), title="Logit attribution (random induction prompt)")
+
+# %%
+
+def head_zero_ablation_hook(
+    z: Float[Tensor, "batch seq n_heads d_head"],
+    hook: HookPoint,
+    head_index_to_ablate: int,
+) -> None:
+    z[:, :, head_index_to_ablate, :] = 0.0
+
+
+
+def get_ablation_scores(
+    model: HookedTransformer,
+    tokens: Int[Tensor, "batch seq"],
+    ablation_function: Callable = head_zero_ablation_hook,
+) -> Float[Tensor, "n_layers n_heads"]:
+    """
+    Returns a tensor of shape (n_layers, n_heads) containing the increase in cross entropy loss from ablating the output
+    of each head.
+    """
+    # Initialize an object to store the ablation scores
+    ablation_scores = t.zeros((model.cfg.n_layers, model.cfg.n_heads), device=model.cfg.device)
+
+    # Calculating loss without any ablation, to act as a baseline
+    model.reset_hooks()
+    seq_len = (tokens.shape[1] - 1) // 2
+    # seq_len = prefix + rep_tokens_half + rep_tokens_half
+    logits = model(tokens, return_type="logits")
+    loss_no_ablation = -get_log_probs(logits, tokens)[:, -(seq_len - 1) :].mean()
+    # we only take the last seq_len - 1 tokens
+
+    for layer in tqdm(range(model.cfg.n_layers)):
+        for head in range(model.cfg.n_heads):
+            # Use functools.partial to create a temporary hook function with the head number fixed
+            temp_hook_fn = functools.partial(ablation_function, head_index_to_ablate=head)
+            # Run the model with the ablation hook
+            ablated_logits = model.run_with_hooks(
+                tokens, 
+                fwd_hooks=[
+                    (utils.get_act_name("z", layer), temp_hook_fn)
+                ]
+            )
+            # Calcualte the loss diference (= negative correct logprobs), only on the last `seq_len` tokens
+            loss = -get_log_probs(ablated_logits, tokens)[:, -(seq_len - 1):].mean()
+            ablation_scores[layer, head] = loss - loss_no_ablation
+
+    return ablation_scores
+
+if MAIN:
+    ablation_scores = get_ablation_scores(model, rep_tokens)
+    tests.test_get_ablation_scores(ablation_scores, model, rep_tokens)
+
+# %%
+
+if MAIN:
+    imshow(
+        ablation_scores,
+        labels={"x": "Head", "y": "Layer", "color": "Logit diff"},
+        title="Loss Difference After Ablating Heads",
+        text_auto=".2f",
+        width=900,
+        height=350,
+    )
+
+# %%
+
+def head_mean_ablation_hook(
+    z: Float[Tensor, "batch seq n_heads d_head"],
+    hook: HookPoint,
+    head_index_to_ablate: int,
+) -> None:
+    z[:, :, head_index_to_ablate, :] = z[:, :, head_index_to_ablate, :].mean(dim=0)
+
+
+if MAIN:
+    rep_tokens_batch = run_and_cache_model_repeated_tokens(model, seq_len=50, batch_size=10)[0]
+    mean_ablation_scores = get_ablation_scores(model, rep_tokens_batch, ablation_function=head_mean_ablation_hook)
+
+    imshow(
+        mean_ablation_scores,
+        labels={"x": "Head", "y": "Layer", "color": "Logit diff"},
+        title="Loss Difference After Ablating Heads",
+        text_auto=".2f",
+        width=900,
+        height=350,
+    )
+
+# %%
+
+def head_z_ablation_hook(
+    z: Float[Tensor, "batch seq n_heads d_head"],
+    hook: HookPoint,
+    head_index_to_ablate: int,
+    seq_posns: list[int],
+    cache: ActivationCache,
+) -> None:
+    """
+    We perform ablation at the z vector, by doing the equivalent of mean ablating all the inputs to this attention head
+    except for those which come from the tokens `n` positions back, where `n` is in the `seq_posns` list.
+    """
+    batch, seq = z.shape[:2]
+    v = cache["v", hook.layer()][:, :, head_index_to_ablate]  # shape [batch seq_K d_head]
+    pattern = cache["pattern", hook.layer()][:, head_index_to_ablate]  # shape [batch seq_Q seq_K]
+
+    # Get a repeated version of v, and mean ablate all but the previous token values
+    v_repeated = einops.repeat(v, "b sK h -> b sQ sK h", sQ=seq)
+    v_ablated = einops.repeat(v_repeated.mean(0), "sQ sK h -> b sQ sK h", b=batch).clone()
+    # why .clone() here? because we are going to edit it in place
+    for offset in seq_posns:
+        seqQ_slice = t.arange(offset, seq)
+        v_ablated[:, seqQ_slice, seqQ_slice - offset] = v_repeated[:, seqQ_slice, seqQ_slice - offset]
+        # seq = 101
+        # seqQ_slice = [offset, offset+1, ...]
+        # seqQ_slice - offset = [0, offset+1, ...]
+        # why do we don't ablate seqQ_slice, seqQ_slice - offset?
+        # offset = 0 preserves self-attention
+        # offset = 1 preserves attention to the previous token
+        # offset = 2 preserves attention to the token before the previous token
+
+    # Take weighted sum of this new v, and use it to edit `z` inplace.
+    z[:, :, head_index_to_ablate] = einops.einsum(v_ablated, pattern, "b sQ sK h, b sQ sK -> b sQ h")
+
+
+def get_ablation_scores_cache_assisted(
+    model: HookedTransformer,
+    tokens: Int[Tensor, "batch seq"],
+    ablation_function: Callable = head_zero_ablation_hook,
+    seq_posns: list[int] = [0],
+    layers: list[int] = [0],
+) -> Float[Tensor, "n_layers n_heads"]:
+    """
+    Version of `get_ablation_scores` which can use the cache to assist with the ablation.
+    """
+    ablation_scores = t.zeros((len(layers), model.cfg.n_heads), device=model.cfg.device)
+
+    model.reset_hooks()
+    seq_len = (tokens.shape[1] - 1) // 2
+    logits, cache = model.run_with_cache(tokens, return_type="logits")
+    loss_no_ablation = -get_log_probs(logits, tokens)[:, -(seq_len - 1) :].mean()
+
+    for layer in layers:
+        for head in range(model.cfg.n_heads):
+            temp_hook_fn = functools.partial(ablation_function, head_index_to_ablate=head, cache=cache, seq_posns=seq_posns)
+            ablated_logits = model.run_with_hooks(tokens, fwd_hooks=[(utils.get_act_name("z", layer), temp_hook_fn)])
+            loss = -get_log_probs(ablated_logits, tokens)[:, -(seq_len - 1):].mean()
+            ablation_scores[layer, head] = loss - loss_no_ablation
+
+    return ablation_scores
+
+if MAIN:
+    rep_tokens_batch = run_and_cache_model_repeated_tokens(model, seq_len=50, batch_size=10)[0]
+
+    offsets = [[0], [1], [2], [3], [1, 2], [1, 2, 3]]
+    z_ablation_scores = [
+        get_ablation_scores_cache_assisted(model, rep_tokens_batch, head_z_ablation_hook, seq_posns=offset).squeeze()
+        for offset in tqdm(offsets)
+    ]
+
+    imshow(
+        t.stack(z_ablation_scores),
+        labels={"x": "Head", "y": "Position offset", "color": "Logit diff"},
+        title="Loss Difference (ablating heads everywhere except for certain offset positions)",
+        text_auto=".2f",
+        y=[str(offset) for offset in offsets],
+        width=900,
+        height=400,
+    )
+# %%
+
+def generate_repeated_tokens_maxrep(
+    model: HookedTransformer,
+    seq_len: int,
+    batch_size: int = 1,
+    maxrep: int = 2,
+) -> Int[Tensor, "batch_size full_seq_len"]:
+    """
+    Same as previous function, but contains a max number of allowed repetitions. For example, maxrep=2 means we can have
+    sequences like `[A][B]...[A][B]`, but not `[A][B][C]...[A][B][C]`.
+    """
+    prefix = (t.ones(batch_size, 1) * model.tokenizer.bos_token_id).long()
+    rep_tokens_half = t.randint(0, model.cfg.d_vocab, (batch_size, seq_len), dtype=t.int64)
+    rep_tokens = t.cat([prefix, rep_tokens_half], dim=-1)
+    for _ in range(seq_len // maxrep + 1):
+        random_start_posn = t.randint(0, seq_len - 2, (batch_size,)).tolist()
+        rep_tokens_repeated = t.stack([rep_tokens_half[b, s : s + maxrep] for b, s in enumerate(random_start_posn)])
+        rep_tokens = t.cat([rep_tokens, rep_tokens_repeated], dim=-1)
+
+    return rep_tokens[:, : 2 * seq_len + 1].to(device)
+
+
+if MAIN:
+    rep_tokens_max2 = generate_repeated_tokens_maxrep(model, seq_len=50, batch_size=10, maxrep=2)
+
+    mean_ablation_scores = get_ablation_scores(model, rep_tokens_max2, ablation_function=head_mean_ablation_hook)
+
+    imshow(
+        mean_ablation_scores,
+        labels={"x": "Head", "y": "Layer", "color": "Logit diff"},
+        title="Loss Difference After Ablating Heads",
+        text_auto=".2f",
+        width=900,
+        height=350,
+    )
 
 # %%
