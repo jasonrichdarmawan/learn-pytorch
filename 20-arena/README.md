@@ -1,8 +1,6 @@
-`requirements.txt` is for ARENA.
-
-```
-python3 -m virtualenv ~/.arena-env
-source ~/.arena-env/bin/activate
+```shell
+conda create --name arena-env python=3.11
+conda activate arena-env
 pip install -r requirements.txt
 ```
 

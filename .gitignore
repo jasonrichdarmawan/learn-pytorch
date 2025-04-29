@@ -1,3 +1,5 @@
 arena-env
 __pycache__
 wandb
+
+**/.env
