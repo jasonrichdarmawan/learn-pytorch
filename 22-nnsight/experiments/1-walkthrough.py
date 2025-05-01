@@ -487,4 +487,103 @@ with tiny_model.trace(input):
 print("Layer 1 output gradient:", layer1_output_grad)
 print("Layer 2 output gradient:", layer2_output_grad)
 
+# %% Interactive Interventions
+#
+# With the iterator context, you can now run an intervention loop
+# at scale. It iteratively executes and updates a single 
+# intervention graph. Use `.session()` to define the iterator
+# context and pass in a sequence of items that you want to loop
+# over at each iteration.
+with tiny_model.session() as session:
+    li = nnsight.list() # an NNsight built-in list object
+    [li.append([num]) for num in range(0, 3)] # adding [0], [1], [2] to the list
+    li2 = nnsight.list().save()
+
+    # You can create nested Iterator contexts
+    with session.iter(li) as item:
+        with session.iter(item) as item_2:
+            li2.append(item_2)
+    
+print("\nList: ", li2)
+
+# %%
+# With `nnsight 0.4` we can now also use Python `for` loops
+# within a tracer context at scale.
+# NOTE: inline for loops (i.e. `[x for x in <Proxy object>]`)
+# are currently not supported
+
+# New: Using Python for loops for iterative interventions
+with tiny_model.session() as session:
+    li = nnsight.list()
+    [li.append([num]) for num in range(0, 3)]
+    li2 = nnsight.list().save()
+
+    # Using regular for loops
+    for item in li:
+        for item_2 in item:
+            li2.append(item_2)
+
+print("\nList: ", li2)
+
+# %%
+
+input_size = 5
+hidden_dims = 10
+output_size = 2
+
+net = torch.nn.Sequential(OrderedDict([
+    ('layers', torch.nn.Sequential(
+            torch.nn.Linear(input_size, hidden_dims),
+            torch.nn.Linear(hidden_dims, 2 * hidden_dims),
+        )
+    ),
+    ('lm_head', torch.nn.Linear(2 * hidden_dims, output_size))
+]))
+
+tiny_model = NNsight(net)
+
+print(tiny_model)
+
+input = torch.rand((1, input_size))
+
+# %%
+
+feature_activation = [
+    torch.tensor([2]),
+    torch.tensor([3])
+]
+
+original_effects = [0 for _ in range(0, 2)]
+patching_effects = [0 for _ in range(0, 2)]
+
+with tiny_model.session() as session:
+    for i in range(0, 3):
+        layer_gradients = []
+        with tiny_model.trace() as tracer:
+            with tracer.invoke(input):
+                # We need to explicitly have the tensor require grad
+                # as the model we defined earlier turned off requiring grad.
+                tiny_model.layers.requires_grad_(True)
+
+                for layer_idx in range(0, 2):
+                    layer_gradients.append(tiny_model.layers.output.grad)
+
+                loss = tiny_model.output.sum()
+                loss.backward()
+
+            for layer_idx in range(0, 2):
+                gradients = layer_gradients[layer_idx]
+
+                original = gradients.sum()
+                effect = torch.einsum('d, sd->s', feature_activation[layer_idx], gradients)
+
+                original_effects[layer_idx] += original
+                patching_effects[layer_idx] += effect
+
+        original_effects = [effect.item().save() for effect in original_effects]
+        patching_effects = [effect.item().save() for effect in patching_effects]
+
+print(original_effects)
+print(patching_effects)
+
 # %%
