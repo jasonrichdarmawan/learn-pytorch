@@ -112,3 +112,146 @@ print(f"weight.grad[0]: {weight.grad[0]}")
 print(f"weight.grad[1]: {weight.grad[0]}")
 
 # %%
+
+import torch
+
+x = torch.tensor([2.0], requires_grad=True)
+
+y = x * 3 # dy/dx = 3
+
+z = y * y # dz/dy = 2*y = 2*(3x) = 6x = 12
+
+loss = z
+
+loss.backward()
+
+"""
+Check the gradient of x
+Chain rule: d(loss)/dx = d(loss)/dz * dz/dy * dy/dx
+d(loss)/dz = 1 (gradient of z w.r.t. itself)
+dz/dy = 2*y = 2*(3*2.0) = 12
+dy/dx = 3
+d(loss)/dx = 1 * 12.0 * 3 = 36.0
+"""
+print(f"x.grad: {x.grad}")
+"""
+Here, both `y = x * 3` and `z = y * y` are part of the graph
+connecting `loss` back to `x`. The gradient `x.grad` reflects
+the derivative of the entire chain of calculations (`z` with
+respect to `x`)
+"""
+
+# %%
+
+import torch
+
+x = torch.tensor([2.0], requires_grad=True)
+
+y = x * 3
+
+y_detached = y.detach()
+
+z = y_detached * y_detached # dz / dy_detached = 2 * y_detached = 12, but no path back to x
+
+loss = z
+
+"""
+Backpropagate
+This will raise an error because `loss` doesn't depend on any 
+tensor requiring gradients in the graph. `y_detached` broke
+the chain back to `x`
+"""
+try:
+  loss.backward()
+except RuntimeError as e:
+  print(f"Error: {e}")
+  print(f"x.grad: {x.grad}")
+
+# %%
+
+import torch
+
+x = torch.tensor([2.0], requires_grad=True)
+y = x * 3
+z = x * 2
+loss = y.detach() + z # d(loss)/dx = d(y.detach())/dx + dz/dx = 0 + 2 = 2
+loss.backward()
+print(f"x.grad: {x.grad}")
+
+"""
+In the second part, when we calculate `loss = y.detach() + z`,
+the calculation involving `y.detach()` does not contribute
+to the gradient of `x` because the connection was severed by
+`.detach()`. Only the `z = x * 2` part contributes, resulting in
+`x.grad` being 2.
+
+In short, any differentiable PyTorch operation involving a tensor
+that requires gradients becomes part of the computation graph
+and influence the gradients calculated by `.backward()`.
+Using `.detach()` (or operating within with `with torch.no_grad():`)
+prevents subsequent operation from being added to the graph for
+that specific part
+"""
+
+# %%
+
+x = torch.tensor([2.0])
+y = x
+y += torch.tensor([2.0])
+
+print(f"x: {x}")
+print(f"y: {y}")
+
+# %%
+
+x = torch.tensor([2.0])
+y = x.detach()
+y += torch.tensor([2.0])
+
+print(f"x: {x}")
+print(f"y: {y}")
+
+# %%
+
+x = torch.tensor([2.0])
+y = x.clone()
+y += torch.tensor([2.0])
+
+print(f"x: {x}")
+print(f"y: {y}")
+
+# %%
+
+x = torch.tensor([2.0], requires_grad=True)
+y = 2 * x
+y.backward()
+
+grad = x.grad
+grad += 1
+
+y = 2 * x
+y.backward()
+
+print(f"x: {x}")
+print(f"y: {y}")
+print(f"x.grad: {x.grad}")
+print(f"grad: {grad}")
+
+# %%
+
+x = torch.tensor([2.0], requires_grad=True)
+y = 2 * x
+y.backward()
+
+grad = x.grad.detach()
+grad += 1
+
+y = 2 * x # dy/dx = 2
+y.backward()
+
+print(f"x: {x}")
+print(f"y: {y}")
+print(f"x.grad: {x.grad}")
+print(f"grad: {grad}")
+
+# %%
