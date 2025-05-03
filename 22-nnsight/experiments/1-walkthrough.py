@@ -1,10 +1,24 @@
 # %%
 
 from collections import OrderedDict
+
 import torch
+import torch.nn as nn
+from torch import Tensor
 
 import nnsight
-from nnsight import NNsight, LanguageModel
+from nnsight import NNsight, LanguageModel, Envoy
+
+from dotenv import load_dotenv
+load_dotenv("22-nnsight/.env")
+import os
+
+from nnsight import CONFIG
+CONFIG.set_default_api_key(os.getenv("NDIF_API_KEY"))
+
+from typing import TypedDict
+from jaxtyping import Float
+from torch.utils.data import DataLoader
 
 # %% NNsight - Tracing Context
 # Reference: https://nnsight.net/notebooks/tutorials/walkthrough/
@@ -587,3 +601,476 @@ print(original_effects)
 print(patching_effects)
 
 # %%
+
+llama = LanguageModel("meta-llama/Meta-Llama-3.1-8B")
+# llama = LanguageModel("deepseek-ai/DeepSeek-R1-Distill-Llama-8B", device_map="auto")
+
+# %% Sessions
+# NDIF uses a queue to handle concurrent requests from multiple users. To optimize
+# the execution of our experiments we can use the `session` context to efficiently
+# package multiple interventions together as one single request to the server.
+#
+# This offers the following benefits:
+# 1. All interventions within a sesion will be executed one after another without
+# additional wait in the NDIF queue
+# 2. All intermediate outputs for each intervention are stored on the server and can
+# be accessed by other itnerventions in the same session without moving the data
+# back and forth between NDIF and the local machine
+# Let's take a look:
+
+with llama.session(remote=True) as session:
+    with llama.trace("The Eiffel Tower is in the city of") as t1:
+        # capture the hidden state from layer 32 at the last token
+        hs_31 = llama.model.layers[31].output[0][:, -1, :] # no .save()
+        t1_tokens_out = llama.lm_head.output.argmax(dim=-1).save()
+    with llama.trace("Buckingham Place is in the city of") as t2:
+        llama.model.layers[1].output[0][:, -1, :] = hs_31[:]
+        t2_tokens_out = llama.lm_head.output.argmax(dim=-1).save()
+
+print("\nT1 - Original Prediction: ", llama.tokenizer.decode(t1_tokens_out[0][-1]))
+print("T2 - Modified Prediction: ", llama.tokenizer.decode(t2_tokens_out[0][-1]))
+
+# In the example above, we are interested in replacing the hidden state of a later
+# layer with an earlier one. Since we are using a `session`, we don't have to save
+# the hidden state from Tracer 1 to reference it in Tracer 2.
+#
+# It is important to note that all the traces defined within the `session` context
+# are executed sequentially, strictly following the order of definition (i.e.
+# `t2` being executed after `t1` and `t3` after `t2` etc.).
+
+# %%
+# The `session` context object has its own methods to log values and be terminated early
+with llama.session(remote=True) as session:
+    session.log("-- Early Stop --")
+    nnsight.stop()
+# In addition to the benefits mentioned above, the `session` context also enables
+# interesting experiments not possible with other `nnsight` tools -- since every trace
+# is run on its own model, it means that within one session we can run interventions
+# between different models - for example, we could swap activations between base
+# and instruct versions of the Llama model and compare their outputs. And `session`
+# can also be used to run similar experiments entirely locally!
+
+# %% Streaming
+# Streaming enables users apply functions and datasets locally during remote model
+# execution. This allows users to stream results for immediate consumption (i.e., seeing
+# tokens as they are generated) or applying non-whitelisted functions such as model
+# tokenizers, large local datasets, and more!
+# 1. `nnsight.local()` context sends values immediately to user's local machine from server
+# 2. Intervention graph is executed locally on downstream nodes
+# 3. Exiting local context uploads data back to server
+# 4. `@nnsight.trace` function decorator enables custom functions to be added
+# to intervention graph when using `nnsight.local()`
+
+# %% `nnsight.local()` context
+# You may sometimes want to locally access and manipulate values during remote execution.
+# Using `.local()` on a proxy, you can send remote content to your local machine and apply
+# local functions. The intervention graph is then executed locally on downstream nodes
+# (until you send execution back to the remote server by exiting `.local()` context)
+#
+# There are a few usecases for streaming with `.local()`, including live chat generation
+# and applying large datasets or non-whitelisted local functions to the itnervention graph.
+# 
+# Now let's explore how streaming works. We'll start by grabbing some hidden states of
+# the model and printing their value using `tracer.log()`. Without calling `nnsight.local()`,
+# these operations will all occur remotely
+
+# This will give you a remote LOG response because it's coming from the remote server
+with llama.trace("hello", remote=True) as tracer:
+    hs = llama.model.layers[-1].output[0]
+    tracer.log(hs[0,0,0])
+    out = llama.lm_head.output.save()
+
+print(out)
+
+# %%
+# Now, let's try the same operation using the `nnsight.local()` context. This will send
+# the operations to get and print the hidden state to your local machine, changing
+# how the logging message is formatted (local formatting instead of remote)
+with llama.trace("hello", remote=True) as tracer:
+    with nnsight.local():
+        hs = llama.model.layers[-1].output[0]
+        tracer.log(hs[0,0,0])
+    
+    out = llama.lm_head.output.save()
+
+print(out)
+
+# %% `@nnsight.trace` function decorator
+# We can also use function decorators to create custom functions to be used during `.local`
+# calls. This is a handy way to enable live streaming of a chat or to train probing classifiers
+# on model hidden states
+#
+# Let's try out `@nnsight.trace` and `nnsight.local()` to access a custom function during
+# remote execution
+
+@nnsight.trace # decorator that enables this function to be added to the intervention graph
+def my_local_fn(value):
+    return value * 0
+
+# We use a local function to ablate some hidden states
+# This downloads the data for the .local context, and then uploads it back to set the value
+with llama.generate("hello", remote=True) as tracer:
+    hs = llama.model.layers[-1].output[0]
+
+    with nnsight.local():
+        hs = my_local_fn(hs)
+    
+    llama.model.layers[-1].output[0][:] = hs
+
+    out = llama.lm_head.output.save()
+
+# Note that without calling .local, the remote API does not know about `my_local_fn`
+# and will throw a whitelist error. A whitelist error occurs because you are being
+# allowed access to the function
+
+# %%
+
+with llama.trace("hello", remote=True) as tracer:
+
+    hs = llama.model.layers[-1].output[0]
+
+    hs = my_local_fn(hs) # no .local - will cause an error
+
+    llama.model.layers[-1].output[0][:] = hs * 2
+
+    out = llama.lm_head.output.save()
+
+print(out)
+
+# %%
+# Example: Live-streaming remote chat
+# Now that we can access data within the tracing context on our local computer,
+# we can apply non-whitelisted functions, such as the model's tokenizer, within our tracing
+# context.
+#
+# Let's build a decoding function that will decode tokens into words and print the result
+
+class StateDict(TypedDict):
+    current_line: str
+    current_line_length: int
+
+@nnsight.trace
+def my_decoding_function(tokens: list[int], model: LanguageModel, max_length=80, state: StateDict=None):
+    # initialize state if not provided
+    if state is None:
+        state = {"current_line": "", "current_line_length": 0}
+
+    print("[ab]", state["current_line"], "[ba]")
+    
+    token = tokens[-1] # only use last token
+
+    # Decode the token
+    decoded_token = llama.tokenizer.decode(token).encode("unicode_escape").decode()
+
+    if decoded_token == "\\n": # Handle explicit newline tokens
+        # Print the current line and reset state
+        print("", flush=True)
+        state["current_line"] = ""
+        state["current_line_length"] = 0
+    else:
+        # Check if adding the token would exceed the max length
+        if state["current_line_length"] + len(decoded_token) > max_length:
+            print("", flush=True)
+            state["current_line"] = decoded_token # Start a new line with the current token
+            state["current_line_length"] = len(decoded_token)
+            print(state["current_line"], flush=True, end="") # Print the current line
+        else:
+            # Add a space if the line isn't empty and append the token
+            if state["current_line"]:
+                state["current_line"] += decoded_token
+            else:
+                state["current_line"] = decoded_token
+            state["current_line_length"] += len(decoded_token)
+            print(state["current_line"], flush=True, end="") # Print the current line
+    
+    return state
+
+# Now we can decode and print our model outputs throughout token generation by accessing 
+# our decoding function through `nnsight.local`
+
+prompt = "A press release is an official statement delivered to members of the news media for the purpose of"
+
+print("Prompt: ", prompt)
+
+# Initialize the state for decoding
+state = {"current_line": "", "current_line_length": 0}
+
+with llama.generate(prompt, remote=True, max_new_tokens=10) as generator:
+    # Call .all() to apply to each new token
+    # TODO: is this expected or a bug?
+    # the code outside the all context is executed at each iteration
+    with llama.all():
+        all_tokens: list[int] = nnsight.list().save()
+
+        # Access model output
+        out = llama.lm_head.output
+
+        # Apply softmax to obtain probabilities and save the result
+        probs: Float[Tensor, "batch seq_len vocab_size"] = torch.nn.functional.softmax(out, dim=-1)
+        max_probs = torch.max(probs, dim=-1)
+        tokens: list[list[int]] = max_probs.indices.cpu().tolist()
+        all_tokens.append(tokens[0]).save()
+
+        with nnsight.local():
+            # TODO: is this expected or a bug?
+            # the state is not updated at each iteration
+            # the state value can't be viewed after the generator context exits
+            state = my_decoding_function(tokens[0], llama, max_length=20, state=state)
+            nnsight.log("[expected print many times]")
+
+    # Not necessary, just for debugging
+    nnsight.log("[expeted print once]")
+    output = llama.output.save()
+
+print()
+
+output_logits = output["logits"]
+print("Model Output Logits: ", output_logits[0].shape)
+
+# decode the final model output from output logits
+max_probs, tokens = output_logits[0].max(dim=-1)
+word = [llama.tokenizer.decode(tokens.cpu())]
+print("Model Output: ", word)
+
+print("All tokens: ", all_tokens)
+
+# %% Looping across sessions
+# We mention earlier that the `session` context enables
+# multi-tracing execution. But how can we optimize a process
+# that would require running an intervention graph in a loop?
+# If we create a simple `for` loop with a Tracer context inside,
+# this will result in creating a new intervention graph
+# at each iteration, which is not scalable.
+# 
+# We solve this problem the `nnsight` way via the Iterator context:
+# an intervention loop that iteratively executes and updates
+# a single intervention graph
+#
+# Use a `session` to define the Iterator context and pass
+# in a sequence of items that you want to loop over at each
+# iteration:
+with llama.session(remote=True) as session:
+    with session.iter([0, 1, 2]) as item:
+        # defien intervention body here ...
+        with llama.trace("_"):
+            # define interventions here ...
+            pass
+        with llama.trace("_"):
+            # define interventions here ...
+            pass
+
+# %%
+
+# The `Iterator` context extends all the `nnsight` graph-based
+# functionalities, but also closely mimics the conventional `for`
+# loop statement in Python, which allows it to support all kind
+# of iterative operations with a use of `as item` syntax:
+with llama.session(remote=True) as session:
+    li = nnsight.list()
+    [li.append([num]) for num in range(0, 3)]
+    li2: list[int] = nnsight.list().save()
+
+    # You can create nested Iterator contexts
+    with session.iter(li) as item:
+        with session.iter(item) as item_2:
+            li2.append(item_2)
+
+print("\nList: ", li2)
+
+# Notice how we used the `nnsight.list()` method to create a list
+# of lists to loop over. This type of method is what we call
+# an NNsight Built-in. It is a special type of methods that
+# serve as a wrapper around `nnsight.apply()` to provide a more
+# user-friendly interface for adding common datatypes to
+# the intervention Graph
+# 
+# Details
+# A full list of NNsight Built-ins
+# `nnsight.bool()` creates a traceable Boolean
+# `nnsight.bytes()` creates a traceable Bytes
+# `nnsight.int()` creates a traceable Integer
+# `nnsight.float()` creates a traceable Float
+# `nnsight.str()` creates a traceable String
+# `nnsight.complex()` creates a traceable Complex number
+# `nnsight.bytearray()` creates a traceable Bytearray
+# `nnsight.tuple()` creates a traceable Tuple
+# `nnsight.list()` creates a traceable List
+# `nnsight.set()` creates a traceable Set
+# `nnsight.dict()` creates a traceable Dictionary
+
+# %%
+# We can also expose the iterator context object via a 
+# return_context flag. You can then use it to exit out of the
+# iteration loop early and log the intermediate outputs within
+# the loop:
+with llama.session(remote=True) as session:
+    # with session.iter([0, 1, 2, 3], return_context=True) as (item, iterator):
+    with session.iter([0, 1, 2, 3]) as item:
+        nnsight.log(item)
+        with nnsight.cond(item == 2):
+            nnsight.stop()
+
+# The Iterator context is a niece piece of functionality that
+# allows you to define a bunch of basic code operations that
+# can be "traceable" by `nnsight`
+# 
+# But in what kind of experimental scenario would someone need
+# iterators?
+#
+# In the next section, we delve into a powerful use case of the
+# `Iterator` context and see how it enables it!
+
+# %% Training a LoRA
+# Here is an example of a task that uses everything we have
+# covered in the last section - remote execution, Session
+# context and iterative interventions. Using session
+# and iterator contexts, we're going apply a very simple 
+# fine-tuning approach called low-rank adaptation (LoRA)
+#
+# Let's try training a LoRA that, when applied, makes our model
+# always predict "Paris" no matter what
+
+# We will define a LoRA class
+# The LoRA class call method operations are simply traced
+# like you would normally do in a .trace
+class LoRA(nn.Module):
+    def __init__(self, module: Envoy, dim: int, r: int) -> None:
+        """Init.
+
+        Args:
+            module (Envoy): Wihch model Module we are adding the LorA to
+            dim (int): Dimension of the layer we are adding to (This could potentially be auto populated if the user scanned first so we know the shape)
+            r (int): Inner dimension of the LoRA
+        """
+        super().__init__()
+        self.r = r
+        self.module = module
+        self.WA = torch.nn.Parameter(torch.randn(dim, self.r), requires_grad=True).save()
+        self.WB = torch.nn.Parameter(torch.zeros(self.r, dim), requires_grad=True).save()
+    
+    def __call__(self, alpha: float = 1.0):
+        """Call.
+
+        Args:
+            alpha (float, optional): How much to apply the LoRA. Can be altered after training for inference. Defaults to 1.0.
+        """
+
+        # We apply WA to the first positional arg (the hidden states)
+        A_x = torch.matmul(self.module.input[0][0], self.WA)
+        BA_x = torch.matmul(A_x, self.WB)
+
+        # LoRA is additive
+        h = BA_x + self.module.output
+
+        # Replace the output with our new one * alpha
+        # Could also have been self.module.output[:] = h * alpha, for in-place
+        self.module.output = h * alpha
+
+    def parameters(self):
+        # Some way to get all the parameters
+        return [self.WA, self.WB]
+
+# Let's define al lthe variables to use in LoRA training
+
+# We need the token id of the correct answer
+answer = "Paris"
+answer_token = llama.tokenizer.encode(answer)[1]
+# Inner LoRA dimension
+lora_dim = 4
+# Module to train LoRA on
+module = llama.model.layers[-1].mlp
+
+# We can use the `.scan()` method to get the shape of the module
+# without having to fully run the model
+with llama.scan(" "):
+    dim = module.output.shape[-1]
+
+print(dim)
+
+# It's time to run the LoRA training loop! We using the Session
+# and the Iterator contexts to achieve this
+
+# The LoRA object itself isn't transmitted to the server. Only the
+# forward / call method. The parameters are created remotely and 
+# never sent only retrieved
+with llama.session(remote=True) as session:
+    # Create dataset of 100 pairs of a blank prompt and the 
+    # " Paris " id
+    dataset = [["_", answer_token]] * 100
+
+    # Create a dataloader from it
+    dataloader = DataLoader(dataset, batch_size=10)
+
+    # Create our LoRA on the last mlp
+    lora = LoRA(module, dim, lora_dim)
+
+    # Create an optimizer. Use the parameters from LoRA
+    optimizer = torch.optim.AdamW(lora.parameters(), lr=3)
+
+    # Iterate over dataloader using .iter
+    with session.iter(dataloader) as batch:
+
+        prompt = batch[0]
+        correct_token = batch[1]
+
+        # Run .trace with prompt
+        with llama.trace(prompt) as tracer:
+            # Apply LoRA to intervention graph just by calling it with .trace
+            lora()
+
+            # Get logits
+            logits = llama.lm_head.output
+            
+            # Do cross entropy on last predicted token and correct_token
+            loss = torch.nn.functional.cross_entropy(logits[:, -1], batch[1])
+            # Calls backward
+            loss.backward()
+
+        # Call methods on optimizer. Graphs that arent from .trace
+        # (so in this case session and iterator both have their
+        # own graph) are executed sequentially
+        # The Graph of Iterator here will be:
+        # 1.) Index batch at 0 for prompt
+        # 2.) Index batch at 1 for correct_token
+        # 3.) Execute the .trace using the prompt
+        # 4.) Call .step() on optimizer
+        optimizer.step()
+        # 5.) Call .zero_grad() in optimizer
+        optimizer.zero_grad()
+        # 6.) Print out the lora WA weights to show they are indeed
+        # changing
+        nnsight.log(lora.WA)
+
+# Now `WA` and `WB` are optimized! So we generate with LoRA
+# just by calling `lora()` in the `.generate` and save the output
+# to then de-tokenize it
+
+# With lora. Should produce "Hello Paris"
+with llama.generate("Hello", remote=True) as generator:
+    lora()
+    out = llama.generator.output.save()
+
+print(llama.tokenizer.batch_decode(out))
+
+# Then without. Should produce "Hello."
+with llama.generate("Hello", remote=True) as generator:
+    out = llama.generator.output.save()
+
+print(llama.tokenizer.batch_decode(out))
+
+# %%
+
+# Next Steps
+# Check out nnsight.net/tutorials for more walkthroughs
+# implementing classic interpretability techniques using `nnsight`
+
+# Getting Involved
+# Note that both `nnsight` and `NDIF` are in active development,
+# so changes may be made and errors may arise during use.
+# If you're interested in following updates to `nnsight`,
+# contributing, giving feedback, or finding collaborators,
+# please join the NDIF discord. We'd love to hear about your
+# work using nnsight!
+# You can also follow us on LinkedIn, Bluesky: [@ndif-team.bsky.social]
+# (https://bsky.app/profile/ndif-team.bsky.social), and X: 
+# [@ndif_team](https://x.com/ndif_team)
