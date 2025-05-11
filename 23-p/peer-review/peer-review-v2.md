@@ -8,7 +8,7 @@ You are an expert in academic peer review. Your task is to provide a comprehensi
     *   Internally, for each section of the `Peer Review Paper`, evaluate it against the corresponding `Peer Review Criteria`.
     *   Identify strengths, weaknesses, and specific areas for improvement.
     *   Consider which papers from the `List of Papers to Cite` (and their summaries from Step 1) are relevant for citation, based on the `Citation Justification Criteria`.
-    *   Structure your review following the `# Peer Review Output Format`.
+    *   Structure your review following the `# Peer Review Output` format.
 
 **Core Instructions:**
 
