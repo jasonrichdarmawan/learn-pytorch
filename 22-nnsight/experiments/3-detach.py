@@ -90,7 +90,7 @@ the computation graph used for backpropagation.
     - The partial derivative with respect to `logits[0]` is -1.
     - The partial derivative with respect to `logits[1]` is -1.
     - So, `∂loss/∂logits = [-1., -1.]`
-    - Therefore, `∂logits/∂weight = [-1., -1.] * [1.0, 2.0]
+    - Therefore, `∂loss/∂weight = [-1., -1.] * [1.0, 2.0]
       = [-1.0, -2.0]`. The gradient `weight.grad` will be 
       `[-1., -2]`
 """
