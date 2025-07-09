@@ -1,0 +1,42 @@
+Setting up environment...
+Loading dataset...
+Data structure:
+Dataset({
+    features: ['id', 'question', 'choices', 'answerKey'],
+    num_rows: 299
+})
+Creating prompts...
+Prompt example:
+Question Juan and LaKeisha roll a few objects down a ramp. They want to see which object rolls the farthest. What should they do so they can repeat their investigation?
+A. Put the objects in groups.
+B. Change the height of the ramp.
+C. Choose different objects to roll.
+D. Record the details of the investigation.
+Answer: 
+Initializing OpenAI client...
+Chat completion example:
+ChatCompletion(id='chatcmpl-BrKvpBwJThQuls9pwLSaltulHG3HE', choices=[Choice(finish_reason='stop', index=0, logprobs=None, message=ChatCompletionMessage(content='D', refusal=None, role='assistant', annotations=[], audio=None, function_call=None, tool_calls=None))], created=1752051545, model='ft:gpt-4.1-nano-2025-04-14:algoverse:arc-100-v1:BiRcF3ec', object='chat.completion', service_tier='default', system_fingerprint='fp_6d51bc3d7f', usage=CompletionUsage(completion_tokens=1, prompt_tokens=80, total_tokens=81, completion_tokens_details=CompletionTokensDetails(accepted_prediction_tokens=0, audio_tokens=0, reasoning_tokens=0, rejected_prediction_tokens=0), prompt_tokens_details=PromptTokensDetails(audio_tokens=0, cached_tokens=0)))
+Extracted answer:
+D
+Generating answers for all prompts...
+Accuracy: 89.30% (267/299)
+Answer indices that are wrong:
+[10, 16, 26, 77, 78, 90, 96, 100, 104, 118, 159, 167, 168, 188, 196, 198, 212, 216, 220, 227, 233, 236, 242, 245, 258, 260, 263, 267, 278, 281, 289, 293]
+Wrong answer example:
+Prompt:
+Question During an investigation, heat transferred from a liquid to the environment. Which pair of explanations can best account for this result?
+A. The temperature of the liquid increased, or the liquid became a gas.
+B. The temperature of the liquid increased, or the liquid became a solid.
+C. The temperature of the liquid decreased, or the liquid became a gas.
+D. The temperature of the liquid decreased, or the liquid became a solid.
+Answer: 
+Expected answer: D
+Generated answer: C
+Word count example:
+{'juan': 1, 'and': 1, 'lakeisha': 1, 'roll': 1, 'a': 2, 'few': 1, 'objects': 1, 'down': 1, 'ramp': 1, 'they': 3, 'want': 1, 'to': 1, 'see': 1, 'which': 1, 'object': 1, 'rolls': 1, 'the': 1, 'farthest': 1, 'what': 1, 'should': 1, 'do': 1, 'so': 1, 'can': 1, 'repeat': 1, 'their': 1, 'investigation': 1}
+Top 5 most frequent words and their counts in descending order:
+the: 63
+of: 37
+a: 25
+is: 23
+to: 20
