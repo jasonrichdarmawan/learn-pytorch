@@ -4,3 +4,6 @@ datasets~=3.6
 openai~=1.93
 
 jaxtyping~=0.3
+
+# interpretability-specific
+transformer_lens~=2.16

@@ -9,6 +9,12 @@
     5. Code end time: 16.38
     6. Save output end time (reason: can't commit with openai api key. the time was spent to refactor): 16.59
 
+2. Interpretability
+
+    1. Set up environment start time: 17.12
+    2. Code start time (reason: huggingface.co is not reachable): 17.47
+    3. Code end time: 18.19
+
 # Installation
 
 1. Create conda env
@@ -43,4 +49,20 @@
     WORKSPACE_PATH=/Users/jason/Documents
     OPENAI_API_KEY=YOUR_API_KEY
     python main.py --dataset_path "$WORKSPACE_PATH/datasets" --openai_api_key "$OPENAI_API_KEY" > output.txt
+    ```
+
+## Interpretability
+
+3. Download GPT-2 model weights
+
+    ```bash
+    WORKSPACE_PATH=/root/autodl-fs
+    HF_ENDPOINT=https://hf-mirror.com huggingface-cli download gpt2 --local-dir "$WORKSPACE_PATH/transformers/gpt2"
+    ```
+
+4. Run the `main.py`
+
+    ```bash
+    WORKSPACE_PATH=/root/autodl-fs
+    python main.py --models_path "$WORKSPACE_PATH/transformers" > output.txt
     ```
