@@ -43,6 +43,27 @@ print(f"weight.grad[0]: {weight.grad[0]}")
 print(f"weight.grad[1]: {weight.grad[0]}")
 
 # %%
+
+
+import torch
+import torch.nn.functional as F
+
+input = torch.tensor([[1.0, 2.0], [3.0, 4.0]])
+weight = torch.tensor([2.0, 3.0], requires_grad=True)
+
+logits = input * weight
+
+probs = F.log_softmax(logits, dim=-1)
+detached_probs = F.log_softmax(logits.detach(), dim=-1)
+loss = F.kl_div(probs, detached_probs, reduction='batchmean').mean(dim=0)
+loss.backward()
+print(f"logits: {logits}")
+print(f"loss: {loss}")
+print(f"weight.grad: {weight.grad}")
+# print(f"weight.grad[0]: {weight.grad[0]}")
+# print(f"weight.grad[1]: {weight.grad[0]}")
+
+# %%
 """
 Let's break down why the gradients differ in these two scenarios.
 The key is understanding how `.detach()` affects
