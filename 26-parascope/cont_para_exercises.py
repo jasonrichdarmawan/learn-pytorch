@@ -140,12 +140,20 @@ print(par1_str)
 print(par2_str)
 
 # %% [markdown]
-# Define the hooks that we'll use to capture the activations
+# Define the hooks that we'll use to capture the 
+# activations
 #
-# We'll use the `store_hook` method to store the activations, and the `modify_hook` method to modify the activations.
+# We'll use the `store_hook` method to store 
+# the activations, and the `modify_hook` method 
+# to modify the activations.
 #
-# The `modify_hook` method is given the activation and the hook, and should return the modified activation only if the hook has not been seen before. (this prevents the scenario where you keep getting the same output over and over)
-# We can optionally scale the changed activations by multiplying by a scalar modify_scaling_factor.
+# The `modify_hook` method is given the activation 
+# and the hook, and should return the modified activation 
+# only if the hook has not been seen before. 
+# (this prevents the scenario where you keep 
+# getting the same output over and over)
+# We can optionally scale the changed activations 
+# by multiplying by a scalar modify_scaling_factor.
 
 class ActStore:
   def __init__(self, model: HookedTransformer):
@@ -167,9 +175,20 @@ class ActStore:
 
   def modify_hook(self, act, hook):
     """
-    Modify the activations for the given hook at modify_hook_token_idx, based on the hook name. Optionally scale the source activations by modify_scaling_factor.
+    Modify the activations for the given hook at 
+    modify_hook_token_idx, 
+    based on the hook name. 
+    Optionally scale the source activations 
+    by modify_scaling_factor.
+
+    Personal comment: How it works?
+    "Text with context" -> do forward pass,
+    get the last token activations,
+    patch it to the "Text without context"
+    at the last token position.
     """
-    # should we modify the act, or have we already done so?
+    # should we modify the act, 
+    # or have we already done so?
     if hook.name in self.act_seen:
       return act
     self.act_seen.add(hook.name)
