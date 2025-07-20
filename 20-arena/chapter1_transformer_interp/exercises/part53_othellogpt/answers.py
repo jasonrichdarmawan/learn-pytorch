@@ -2092,4 +2092,40 @@ the model's `theirs - mine` direction, and this
 direction is used by the model downstream.
 </details>
 """
+
 # %%
+
+"""
+# Final recap of the useful objects we've defined
+
+We have the following:
+Models
+- `model` is an 8-layer autoregressive transformer, trained to
+  predict legal Othello moves. Its vocab is `range(0,61)` where 0 = "pass"
+  and other numbers represent the 60 possible moves, excluding the 4 middle squares
+- `full_linear_probe.shape = (mode=3, d_model=512, row=8, col=8, options=3)`,
+  probe in the "black/white basis" (modes are black/white/both to play,
+  options are empty/white/black)
+- `linear_probe.shape = (d_model=512, row=8, col=8, options=3)`,
+  probe in the "theirs/mine basis" (options are empty/theirs/mine)
+- `blank_probe` and `my_probe`, both have shape `(d_model=512, row=8, col=8)`
+  and are created from linear combinations of the `linear_probe` options
+
+All data
+- `board_seqs_id.shape = (100k, 60)` contains the moves from all 100k games (as token ids)
+- `board_seqs_square.shape = (100k, 60)` contains the moves from all 100k games (as ints)
+
+Focus games data
+- `focus_games_id.shape = (50, 60)` contains the moves from 50 games 
+  (as token ids)
+- `focus_games_square.shape = (50, 60)` contains the moves from 50 games 
+  (as ints)
+- `focus_states.shape = (50, 60, 8, 8)` contains the board states after 
+  each move (0 = empty, 1 = black, -1 = white)
+- `focus_legal_moves.shape = (50, 60, 8, 8)` contains a 1 for each legal 
+  move, and 0 for each illegal move
+- `focus_logits.shape = (50, 59, 61)` contains model's output logits
+  on focus games (59 because we don't include the final move in
+  our fwd pass, 61 because our vocab size is 61 - 
+  we have 60 moves + 1 for pass)
+"""
