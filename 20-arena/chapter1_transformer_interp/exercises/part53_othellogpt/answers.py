@@ -1202,6 +1202,38 @@ A = t.arange(0, 3 * 2 * 2 * 2 * 3, dtype=t.float32).reshape(3, 2, 2, 2, 3)
 print(A[0, ..., 1])
 print(A[[0,1], ..., [1,2]])
 ```
+
+What investigation support that the probe learns
+directions in terms of "theirs vs mine" rather
+than "black vs white"?
+The main evidence comes from the cosine
+similarity analysis of the probe directions for
+each square and move parity (odd/even):
+- `black_vs_white_dir_odd_moves`: 
+  the "black vs white" probe direction
+  for each square, for both odd moves (black to
+  play) and even moves (white to play)
+- Compare these directions across all
+  squares and both parities by computing their
+  pairwise cosine similarities
+- Key finding: For each square, the "black vs white"
+  direction for odd moves is almost exactly the
+  negative of the direction for even moves (cosine
+  similarity ≈ -1)
+  - This means: the direction that means
+    "mine" flips sign depending on whose turn it is
+  - If the probe were learning "black vs white",
+    you'd expect the directions to be similar
+    across parities, not opposite
+  - The fact that they're opposite shows the
+    probe is really learning "mine vs theirs"
+
+This is vusalized as two strong off-diagonal
+stripes with values close to -1 in the cosine
+similarity matrix. This anti-correlation
+is exactly what you'd expect if the probe
+is encoding "mine vs theirs" rather than "black
+vs white"
 """
 
 # %%
