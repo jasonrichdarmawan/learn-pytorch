@@ -1164,3 +1164,932 @@ print(einops.einsum(D, D, "m n, m p -> p n))
 """
 
 # %%
+
+"""
+# Changing probe basis
+
+Now we've established that the probe directions
+are very similar, let's just average them
+to create our probe in a new basis: the "theirs vs mine"
+basis, not the "black vs white" basis. For example,
+our new probe's "theirs" direction will be the average
+of the white direction when black is to play,
+and the black direction when white is to play
+"""
+
+linear_probe = t.stack(
+  [
+    full_linear_probe[[black_to_play, white_to_play], ..., [empty, empty]].mean(0),  # "empty" direction
+    full_linear_probe[[black_to_play, white_to_play], ..., [white, black]].mean(0),  # "theirs" direction
+    full_linear_probe[[black_to_play, white_to_play], ..., [black, white]].mean(0),  # "mine" direction
+  ],
+  dim=-1,
+)
+
+"""
+Personal note
+2. Why does the shape become (2, 512, 8, 8) and not (2, 512, 8, 8, 2)?
+- When you use advanced indexing like this,
+  PyTorch matches the first and last indices elementwise:
+  - For the first element: `full_linear_probe[0, ..., 1]` (black_to_play, white)
+  - For the second element: `full_linear_probe[1, ..., 2]` (white_to_play, black)
+- The result is a tensor where each element along the first axis
+  is a `(d_model, 8, 8)` tensor, so the output shape is
+  `(2, d_model, 8, 8)`
+
+```python
+A = t.arange(0, 3 * 2 * 2 * 2 * 3, dtype=t.float32).reshape(3, 2, 2, 2, 3)
+print(A[0, ..., 1])
+print(A[[0,1], ..., [1,2]])
+```
+"""
+
+# %%
+
+"""
+Let's test out our new probe, by applying it to
+move 29 in game 0 from our focus games. This is
+an odd move, so black is to play.
+"""
+
+def plot_probe_outputs(
+  cache: ActivationCache, 
+  linear_probe: Tensor, 
+  layer: int, 
+  game_index: int, 
+  move: int, 
+  title: str = "Probe outputs",
+):
+  residual_stream = cache["resid_post", layer][game_index, move]
+  probe_out = einops.einsum(residual_stream, linear_probe, "d_model, d_model row col options -> options row col")
+
+  utils.plot_board_values(
+    probe_out.softmax(dim=0),
+    title=title,
+    width=900,
+    height=400,
+    board_titles=["P(Empty)", "P(Their's)", "P(Mine)"],
+    # text=BOARD_LABELS_2D,
+  )
+
+layer = 6
+game_index = 0
+move = 29
+
+utils.plot_board_values(
+  focus_states[game_index, move],
+  title="Focus game states",
+  width=400,
+  height=400,
+  text=focus_legal_moves_annotation[game_index][move],
+)
+
+plot_probe_outputs(
+  focus_cache,
+  linear_probe,
+  layer,
+  game_index,
+  move,
+  title=f"Probe outputs after move {move} (black to play)",
+)
+
+# %%
+
+"""
+Moving back to layer 3, it seems the model
+already has a pretty good board state
+representation by this point, but it's missing
+a few things (most notably it thinks C5 and
+especially C6 are white when they're actually black).
+My guess is that the board state calcualtion circuits
+haven't quite finished and are doing some
+iterative reasoning - if those cells have been taken
+several times, maybe it needs a layer to
+track the next earliest time it was taken? 
+I don't know, and figuring this out would be great 
+starter project if you want to explore!
+"""
+
+layer = 3
+game_index = 0
+move = 29
+
+plot_probe_outputs(
+  focus_cache,
+  linear_probe,
+  layer,
+  game_index,
+  move,
+  title=f"Probe outputs (layer {layer}) after move {move} (black to play)",
+)
+
+# %%
+
+"""
+Now let's take one step forward - we should
+see the representations totally flip. This is
+indeed what we find
+"""
+
+layer = 4
+game_index = 0
+move = 30
+
+utils.plot_board_values(
+  focus_states[game_index, move],
+  text=focus_legal_moves_annotation[game_index][move],
+  title="Focus game states",
+  width=400,
+  height=400,
+)
+plot_probe_outputs(
+  focus_cache, 
+  linear_probe, 
+  layer, 
+  game_index, 
+  move, 
+  title=f"Probe outputs (layer {layer}) after move {move} (white to play)"
+)
+
+"""
+Note that the model gets the corner wrong in
+this case (incorrectly thinknig that the
+corner is white rather than empty) - it's not
+a big deal, but interesting!
+
+Can you think of a reason why corners might
+be treated differently in this model?
+
+<details>
+<summary>Hint</summary>
+One possible reason is to do with the rules of
+Othello, and how the corners have a special
+significance. What happens to a piece once
+it's placed in the corner?
+</details>
+
+<details>
+<summary>One possible reason</summary>
+A fact about Othello is that a piece in the
+corners can never be flanked and thus
+will never change colour once placed - perhaps
+the model has decided to cut corners and have
+different and less symmetric circuit for these?
+
+Trying to locate this circuit might be a fun
+bonus exercise!
+</details>
+"""
+
+# %%
+
+"""
+# Computing accuracy
+
+Hopefully I've convinced you anecdotally that
+a lienar probe works. But to be more rigorous,
+let's check accuracy across our 50 games.
+"""
+
+# Create a tensor of "their vs mine" board states (by flipping even parities of the "focus_states" tensor)
+focus_states_theirs_vs_mine = focus_states * (-1 + 2 * (t.arange(focus_states.shape[1]) % 2))[None, :, None, None]
+
+# Convert values (0: empty, 1: theirs, -1: mine) to (0: empty, 1: theirs, 2: mine)
+focus_states_theirs_vs_mine[focus_states_theirs_vs_mine == 1] = 2
+focus_states_theirs_vs_mine[focus_states_theirs_vs_mine == -1] = 1
+
+# Get probe values at layer 6, and compute the probe predictions
+probe_out = einops.einsum(
+  focus_cache["resid_post", 6],
+  linear_probe,
+  "game move d_model, d_model row col options -> game move row col options",
+)
+probe_predictions = probe_out.argmax(dim=-1)
+
+"""
+Personal note:
+Why this einsum?
+- `focus_cache["resid_post", 6]` is the residual
+  stream activation at alyer 6 for each game and
+  move, shape `(game, move, d_model)`
+- `linear_probe` contains the probe directions
+   for each board square and class (empty/theirs/mine),
+   shape `(d_model, row, col, options)`
+
+The einsum computes, for each game, move, row, col,
+and option:
+- The dot product between the residual stream
+  vector and the probe direction for that square
+  and option
+
+Why sum over the `d_model` dimension?
+- The sum over `d_model` is the dot product between
+  the model's activation and the probe direction
+- This projects the activation onto the probe
+  direction, giving a logit (score) for each class
+  (empty/theirs/mine) for each square
+
+Why is this considered as probe predictions?
+- For each square, you get three logits (one for each class)
+- Taking `argmax` over the options dimension gives the predicted class for that square
+- This is exactly how a linear probe works: it reads out
+  the most likely class by projecting onto learned directions
+  and picking the highest score
+
+```python
+A = t.arange(0, 3 * 4 * 2 * 2 * 3, dtype=t.float32).reshape(3, 4, 2, 2, 3)
+B = A.argmax(dim=-1)
+print(A.shape)
+print(B.shape)
+```
+"""
+
+# Get accuracy at odd, even & all moves (average over games & moves)
+correct_middle_odd_answers = (probe_predictions.cpu() == focus_states_theirs_vs_mine[:, :-1])[:, 5:-5:2]
+accuracies_odd = einops.reduce(correct_middle_odd_answers.float(), "game move row col -> row col", "mean")
+
+correct_middle_even_answers = (probe_predictions.cpu() == focus_states_theirs_vs_mine[:, :-1])[:, 6:-5:2]
+accuracies_even = einops.reduce(correct_middle_even_answers.float(), "game move row col -> row col", "mean")
+
+correct_middle_answers = (probe_predictions.cpu() == focus_states_theirs_vs_mine[:, :-1])[:, 5:-5]
+accuracies = einops.reduce(correct_middle_answers.float(), "game move row col -> row col", "mean")
+
+# Plot accuracies
+utils.plot_board_values(
+  1 - t.stack([accuracies_odd, accuracies_even, accuracies], dim=0),
+  title="Average Error Rate of Linear Probe",
+  width=1000,
+  height=400,
+  board_titles=["Black to play", "White to play", "All moves"],
+  zmax=0.25,
+  zmin=-0.25,
+)
+
+"""
+Note that we can see the probe is worse 
+near corners, as we anecdotally observed
+"""
+
+# %%
+
+"""
+# Intervening with the probe
+
+One of the really exciting consequences of a linear
+probe is that it gives us a set of interpretable
+directions i nthe residual stream! And with this,
+we can not only interpret the model's representations,
+but we can also intervene in the model's reasoning.
+
+The first step is to convert our probe to
+meaningful directions. Each square's probe has
+3 vectors, but the logits go into a softmax,
+which is translation invariant, so this only
+has two degrees of freedom. A natural-ish way
+to convert it into two vectors is taking
+`blank - (mine + theirs)/2` giving a
+"is this cell empty or not" direction and 
+mine - theirs giving a "conditional on being
+blank, is this my colour vs their's" direction
+
+<details>
+<summary>Help - I'm confused by this</summary>
+If you've done the indirect object exercises,
+this is similar to looking at the "John" - "Mary"
+direction in the logit output - i.e. we take
+the difference between two logits, and this gets
+us the log-likelihood ratio between these two options,
+and this gets us the log-likelihood ratio between
+these two options
+
+It's slightly less principled when we're dealing
+with more than two different logits, because
+the nonlinearities get messy. However, using
+`blank - (mine + theirs)/2` is still a pretty
+reasonable metric:
+- It's symmetrics in `mine` and `theirs`
+- It's translation invariant (i.e. you could add 
+  constant `c` onto all of `blank`, `mine`, and `theirs` 
+  and it wouldn't change)
+- If you increase `blank` by some amount `c`
+  and keep the other two the same, then this
+  metric also increases by `c`
+
+The `mine - theirs` direction is more principled
+</details>
+
+Having a single meaningful direction is important,
+because it allows us to interpret a feature or
+intervene on it. The original three directions
+has one degree of freedom,
+so each direction is arbitrary on its own
+
+Personal note:
+1. "It's slightly less principled when we're
+    dealing with more than two different logits,
+    because the nonlinearities get messy."
+    - When you have only two logits (e.g., "mine"
+      vs "theirs"), taking their difference directly
+      gives you the log-odds (log-likelihood ratio)
+      between the two classes, which is a very principled
+      and interpretable metric
+      - Why taking their difference directly
+        gives you the log-odds (log-likelihood ratio)?
+        - Suppose you have two logits, `a` (for "mine")
+          and `b` (for "theirs"). The softmax probabilities are:
+          P(mine) = exp(a) / exp(a) + exp(b)
+          P(theirs) = exp(b) / exp(a) + exp(b)
+        - The log-odds (log-likelihood ratio) of "mine" vs "theirs" is:
+          log(P(mine) / P(theirs)) = log(e^a / e^b) = a - b
+    - With three logits (e.g., "blank", "mine",
+      "theirs"), the softmax introduces more complex
+      relationships (nonlinearities) between the
+      logits, so combining them (like `blank - (mine + theirs)/2`
+      is more of a heuristic than a mathematically "pure" log-odds)
+    - In other words, the interpretation is less direct,
+      but it's still a useful and reasonable way to summarize "empty vs not empty".
+2. "It's symmetric in `mine` and `theirs`"
+   - The formula `blank - (mine + theirs)/2`
+     treats "mine" and "theirs" equally: swapping
+     their values doesn't change the result
+     - Why is this good?
+       It means the metric does not favor "mine"
+       or "theirs", it treats both classes equally
+       when measuring "is this cell empty or not?".
+       This makes the metric unbiased with respect
+       to which player owns the piece
+   - This symmetry is desirable because we want
+     the "empty vs not empty" metric to be unbiased
+     with respect to which player owns the piece
+3. "If you increase `blank` by some amount `c`
+   and keep the other two the same, then this metric
+   also increases by "c"`
+   - If you add a constant to the "blank" logit,
+     the metric becomes `(blank + c) - (mine + theirs)/2
+     = (blank - (mine + theirs)/2) + c`
+   - So, the metric increases by exactly `c`.
+   - This property means the metric responds linearly
+     to changes in the "blank" logit, making it
+     easy to interpret
+4. Why do we want to increase `blank` by some amount `c`
+   and keep the other two the same?
+   - This is thought experiment to show that
+     the metric is sensitive only to the "blank"
+     logit, not affected by the absolute values
+     of "mine" or "theirs"
+   - It demonstrates that the metric is robust
+     to global shifts and only reflects the relative
+     likelihood of "empty" compared to "occupied"
+5. "The original three directions has one degree
+    of freedom, so each direction is arbitrary
+    on its own"
+   - Because of softmax translation invariance,
+     only the differences between the three
+     logits matter; you can add any constant
+     to all three and the probabilities won't change
+   - This means the three logits (directions) are
+     not all independent, only two are. The third
+     is determiend by the other two up to a constant
+     shift
+   - So, any single direction (logit) by itself is
+     arbitrary; only their differences are meaningful
+
+Summary:
+- The `blank - (mine + theirs)/2` metric is a
+  practical, symmetric, and robust way to distinguish
+  "empty" from "not empty" even though it's not
+  as mathematically pure as the two-class case
+- The metric's properties make it interpretable
+  and robust to shifts, and the softmax's translation
+  invariance means only difference between logits
+  matter, not their absolute values
+"""
+
+"""
+Personal note:
+> Each square's probe has 3 vectors, but the
+> logits go into a softmax,
+> which is translation invariant,
+> so this only has two 3 degrees of freedom
+
+It means:
+- For each sqsuare, the probe outputs 3 logits
+  (scores), one for each class (empty, mine, theirs)
+- These logits are passed through a softmax,
+  to get probabilities
+
+Softmax is translation invariant:
+If you add the same constant to all logits,
+the output probabilities do not change.
+Mathematically, for logits `[a,b,c]` and any
+constant `k`:
+```
+softmax([a, b, c]) == softmax([a+k, b+k, c+k])
+```
+
+This is because the softmax computes:
+```
+exp(a) / (exp(a) + exp(b) + exp(c)), etc.
+```
+and adding `k` to all logits multiplies the numerator
+and denominator by `exp(k)`, which cancels out
+
+So:
+- Only the differences between the logits matter,
+  not their absolute values
+- This means, although there are 3 logits, only
+  2 are independent (the third is determiend by the
+  other two up to a constant shift)
+- In other words, the 3D logit vector effectively
+  lives in a 2D subspace-2 degrees of freedom
+
+Summary:
+Because softmax is translation invariant,
+only the relative values of the 3 logits mattter,
+so there are only 2 degrees of freedom for each
+square's probe output
+
+Degrees of freedom refers to the number of
+independent values or parameters that can
+vary in a system
+
+1. Why does `blank - (mine + theirs)/2` 
+   give an "is this cell empty or not" direction?
+   - For each square, the probe outputs three logits:
+     `[blank, theirs, mine]`
+   - If you take the average of the "theirs" and
+     "mine" logits, you get the typical value
+     for a non-empty cell.
+   - Subtracting this average from the "blank"
+     logit gives you a direction that is high
+     when the cell is empty and low when it is
+     not occupied (regardless of who owns it).
+   - So, this direction answers: "is this cell empty
+     or not?"
+
+     Example:
+     If `[blank, theirs, mine] = [3, 1, 2]` then
+     `blank - (mine + theirs)/2 = 3 - (1 + 2)/2 = 3 - 1.5 = 1.5` (positive, so likely empty)
+     If `[blank, theirs, mine] = [1, 3, 2]` then
+     `blank - (mine + theirs)/2 = 1 - (3 + 2)/2 = 1 - 2.5 = -1.5` (negative, so likely occupied)
+
+2. Why does `mine - theirs` give a "conditional
+   on being blank, is this my colour vs their's" direction?
+   - Once you know a cell is not empty, you want to know
+     whose piece it is
+   - The difference `mine - theirs` is positive
+     if the cell is yours, negative if it is theirs
+   - This direction is only meaningful when
+     the cell is not empty (hence "conditional
+     on being blank")
+   - So, this direction answers: "If this cell is
+     occupied, is it mine or theirs?"
+
+Example:
+If `[blank, theirs, mine] = [1, 2, 3]`, then
+`mine - theirs = 3 - 2 = 1` (yours)
+If `[blank, theirs, mine] = [1, 3, 2]`, then
+`mine - theirs = 2 - 3 = -1` (theirs)
+
+Summary:
+- `blank - (mine + theirs)/2`: High for empty,
+  low for occupied (empty vs not).
+- `mine - theirs`: High for yours, low for theirs
+  (whose piece, if not empty)
+
+This gives you two interpretable, independent 
+directions for each square
+"""
+
+"""
+The reason we don't just use `linear_probe[..., 0]
+(the "empty" direction) directly as the "is this cell empty or not"
+direction is because of softmax translation invariance
+and the need to distinguish "empty" from "not empty"
+in a way that's robust to the relevance scale
+and offset of the logits
+
+Why not just use `linear_probe[..., 0]`?
+- `linear_probe[..., 0]` gives the logit
+  for "empty", but the softmax output depends on
+  all three logits (`empty`, `theirs`, `mine`), not
+  just the "empty" one
+- The absolute value of the "empty" logit doesn't
+  matter-only its value relative to the other two does
+
+Why use `blank - (mine + theirs)/2`?
+- By subtracting the average of the "mine" and "theirs"
+  logits from the "empty" logit, you get a direction
+  that is high when "empty" is much more likely than
+  either "mine" or "theirs"
+- This centers the "empty" logit relative to the
+  other two, making it a more robust indicator
+  of "is this cell empty or not", regardless of
+  any constant offset in the logits
+- It also matches the fact that, due to softmax
+  translation invariance, only the differences
+  between logits matter
+
+Analogy
+Think of it like this:
+- If you want to know if a cell is empty, you don't
+  just care about the "empty" score–you care about
+  how much higher it is than the average of
+  the "occupied" scores.
+
+Summary
+- `linear_probe[..., 0]` alone is not enough,
+  because softmax only cares about differences.
+- `blank - (mine + theirs)/2` gives a direction
+  that robustly distinguishes empty from not
+  empty, taking into account the relative
+  values of all three logits
+"""
+
+"""
+The concept is similar to mean-centering
+
+When you compute `blank - (mine + theirs)/2`,
+you are centering the "empty" logit relative to
+the average of the "mine" and "theirs" logits.
+This is like subtracting the mean of the "occupied"
+logits from the "empty" logit.
+
+Why do this?
+- The softmax is only sensitive to the differences
+  between logits, not their absolute values
+- By centering, you remove any constant offset
+  that might be present in all logits (for example,
+  if all logits are shifted up or down by the same
+  amount, the softmax output doesn't change)
+- This makes your "is this cell empty or not"
+  direction robust: it only reflects how much
+  more likely "empty" is compared to the average
+  of the other two options, not affected by 
+  any global bias or offset
+
+Analogy to mean-centering:
+- In statistics, mean-centering (subtracting the
+  mean from each value) removes the overall bias
+  and focuses on the variation relative to the mean
+  - "Removing the overall bias"
+    This means you're shifting the data so that the average
+    value becomes zero. For example, if a feature
+    like height has a mean of 170 cm, mean-centering
+    turns it into a distribution centered around 0
+  - "Focus on the variation relative to the mean"
+    Once you subtract the mean, you're no longer concerned
+    with where the data is cnetered (e.g., 170 cm),
+    but how much it varies - the spread. That variation
+    is usually what's important in statistical models
+  - Why remove the bias (mean)?
+    Because in many models, the absolute location 
+    of your data (the mean) is not informative,
+    but the variation (spread, direciton, correlation) is
+  - Why do we want to do this?
+    - Removing thebias (mean) makes your analysis
+      robust to global shifts or offsets, so you
+      only measure the meaningful differences
+    - In the context of logits and softmax, only
+      the differencs between logits matter,
+      not their absolute values, so mean-centering
+      (or similar operations) ensures your analysis
+      reflects what actually affects the outcome
+  Summary:
+  Mean-centering removes irrelevant global shifts
+  and lets you focus on the meaningful differences
+  between values
+- Here, subtracting the average of "mine" and "theirs"
+  from "empty" does the same: it focuses on
+  how "empty" stands out compared to the alternatives,
+  not just its raw value
+
+Summary:
+Centering the "empty" logit relative to the
+other two makes the indicator robust to shifts in
+all logits and ensures it truly measures
+"empty vs not empty," jnot just the raw "empty" scores
+"""
+
+# %%
+
+"""
+Exercise - define your probe directions
+
+Define the tensors `blank_probe` and `my_prob`,
+which point in the two directions given above
+
+<details>
+<summary>Help - I'm confused by exactly how to take the linear combination here</summary>
+Your `linear_probe` tensor has shape `[d_model, row, col, options]`,
+where the options are `(blank, theirs, mine)` respectively.
+You want to create 2 new tensors of shape `[d_model, row, col]`
+where each one is the probe
+</details>
+"""
+
+# blank(0) - (theirs(1) + mine(2))/2
+blank_probe = linear_probe[..., 0] - (linear_probe[..., 1] + linear_probe[..., 2])/2
+# mine(2) - theirs(1)
+my_probe = linear_probe[..., 2] - linear_probe[..., 1]
+
+tests.test_my_probes(blank_probe, my_probe, linear_probe)
+
+# %%
+
+"""
+Now that we've got our probe working, let's see it in action!
+We'll take the 20th move in the 0th game as our example:
+"""
+
+game_index = 0
+move = 20
+
+# Plot board state
+utils.plot_board_values(
+  focus_states[game_index, move],
+  title="Focus game states",
+  width=400,
+  height=400,
+  text=focus_legal_moves_annotation[game_index][move],
+)
+
+# Plot model predictions
+logprobs = t.full(size=(8, 8), fill_value=-13.0, device=device)
+logprobs.flatten()[ALL_SQUARES] = focus_logits[game_index, move].log_softmax(dim=-1)[1:]
+utils.plot_board_values(logprobs, title=f"Logprobs after move {move}", width=450, height=400)
+
+"""
+Personal note:
+We use `log_softmax` instead of `softmax` because:
+- Numerical stability: `log_softmax` is more
+  numerically stable, especially when dealing with
+  very large or very small logits. it avoids
+  potential overflow/underflow issues that can
+  happen with `exp` in `softmax`
+- Interpretability: The output of `log_softmax`
+  is the log-probability for each class.
+  Log-probabilities are often easier to work
+  with mathematically (e.g., for loss functions
+  like cross-entropy, or for adding probabilities
+  in log-space)
+- Consistency: Many downstream tasks (like
+  loss computation or log-likelihood analysis
+  expect log-probabilities, not probabilities)
+
+In your code, `logprobs` stores the log-probabilities
+for each move, which is standard practice in deep learning
+for both stability and convenience. If you need
+actual probabilities, you can always exponentiate
+the log-probs: `probs = logprobs.exp()`
+"""
+
+"""
+Now, how does the game state (i.e. which moves are legal
+for white) change when `F4` is flipped
+black to white?
+
+<details>
+<summary>Hint</summary>
+One move becomes legal, one becomes illegal
+</details>
+
+<details>
+<summary>Answer</summary>
+- `G4` becomes illegal, because you're no longer
+  surrounding the vertical line of black pieces
+  in column 4
+- `D2` becomes legal, because now you'd be
+  diagonally surrounding the single black piece
+  at `E3`.
+</details>
+
+Let's verify this using the `OthelloBoardState` class
+"""
+
+cell_r = 5
+cell_c = 4
+print(f"Flipping the color of cell {'ABCDEFGH'[cell_r]}{cell_c}")
+
+board = utils.OthelloBoardState()
+board.update(focus_games_square[game_index, : move + 1].tolist())
+valid_moves = board.get_valid_moves()
+flipped_board = copy.deepcopy(board)
+flipped_board.state[cell_r, cell_c] *= -1
+flipped_legal_moves = flipped_board.get_valid_moves()
+
+newly_legal = [utils.square_to_label(move) for move in flipped_legal_moves if move not in valid_moves]
+newly_illegal = [utils.square_to_label(move) for move in valid_moves if move not in flipped_legal_moves]
+print("newly_legal", newly_legal)
+print("newly_illegal", newly_illegal)
+
+"""
+We can now intervene on the model's residual stream
+using the "my colour vs their colour" direction.
+I get the best results intervening after layer 4.
+This is a linear intervention - we are just
+changing a single dimension of the residual
+stream and keeping the others unchanged.
+This is a failry simple intervention,
+and it's striking that it works!
+
+I apply the fairly janky technique of taking current corrdinate
+in the given direction, negating it, and them
+multiply by a hyperparameter called `scale`
+(scale between 1 and 8 tends to work best - small
+isn't enough and big tends to break things).
+I haven't tried hard to optimise this and I'm
+sure it can be improved! Eg by repalcing the
+model's coordinate by a constant rather than
+scaling it. I also haven't dug into the best scale
+parameters, or, which ones work best in which contexts,
+plasubily different cells have different activation scales
+on their world models and need different behavior
+"""
+
+# %%
+
+"""
+# Exercise - define the `apply_scale` function
+
+Define a function which will take in the residual
+stream value and the associated hook point
+as arguments, and return a modified version of the
+residual stream, in the way described above
+
+To be clear, if we define $\vec{v}$ as the probe's
+flip direction for a given square (called `flip_dir`
+below), then we can write our residual
+stream (at `pos=20`, whch is the one we're interested in)
+as the vector:
+
+$$
+\text{resid}_{20} = \alpha \times \vec{v} + \beta \times \vec{w}
+$$
+
+where $\vec{w}$ is some vector orthogonal to $v$.
+We want to alter the residual stream at this position
+to be:
+
+$$
+\text{resid}_{20} = -\text{scale} \times \alpha \times \vec{v} + \beta \times \vec{w}
+
+Remember to normalize vector $\vec{v}$!
+$$
+"""
+
+def apply_scale(
+  resid: Float[Tensor, "batch seq d_model"], 
+  flip_dir: Float[Tensor, "d_model"], 
+  scale: int, 
+  pos: int,
+) -> Float[Tensor, "batch seq d_model"]:
+  """
+  Returns a version of the residual stream, 
+  modified by the amount `scale` in the
+  direction `flip_dir` at the sequence position 
+  `pos`, in the way described above.
+  """
+  flip_dir_normed = flip_dir / flip_dir.norm()
+
+  alpha = resid[0, pos] @ flip_dir_normed
+  resid[0, pos] -= (scale + 1) * alpha * flip_dir_normed
+
+  return resid
+
+tests.test_apply_scale(apply_scale)
+
+"""
+Personal note:
+1. What does "if we define $\vec{v} as the
+   probe's flip direction for a given square
+   (called `flip_dir` below), then we can write
+   our residual stream (at `pos=20`, which is
+   the one we're interested in) as the vector:" mean?
+   - $\vec{v}$ (or `flip_dir`) is a specific direction
+     in the model's activation space (the probe
+     direction for a particular square)
+   - The residual stream at a given position (here,
+     move 20) is a vector in the same space
+   - The statement means: we can decompose the
+     residual stream at position 20 into two parts
+     - One part along the probe direction (`flip_dir`)
+     - One part orthogonal (perpendicular) to it
+2. Why are we interested at `pos=20`?
+   - `pos=20` refers to the 20th move in the game.
+3. Why "$\vec{w}$ is some vector orthogonal to $v$?
+   - Any vector in space can be decomposed into
+     a component along a direction and a component
+     orthogonal to it
+   - Here, $\vec{w}$ is the part of the residual
+     stream that is not captured by the probe
+     direction (`flip_dir`)
+   - This decomposition is standard in linear algebra:
+     $$ 
+     \text{resid_stream} = (
+      (\text{projection onto } \vec{v}) 
+      + (\text{everything else, orthogonal to} \vec{v}
+     )
+     $$
+4. Why `flip_dir = my_probe[:, cell_r, cell_c]`?
+   - `my_probe` is a tensor of probe directions 
+     for each square
+   - `my_probe[:, cell_r, cell_c]` selects
+     the probe direction for the square at
+     row `cell_r`, column `cell_c`
+   - This direction is used to "read out" or
+     intervene on the model's representation
+     for that specific square
+
+# Summary
+- We decompose the residual stream at a specific
+  move (e.g., 20) into a part along the
+  probe direction for a square and a part
+  orthogonal to it
+- This helps us interpret or intervene in the
+  model's internal representation for that
+  square at that move
+"""
+
+# %%
+
+"""
+Now, you can run the code below to see the output
+of your interventions. You should see that the model's
+prediction changes, it starts predicting `D2` as legal
+and `G4` as illegal.
+"""
+
+flip_dir = my_probe[:, cell_r, cell_c]
+
+logprobs_flipped = []
+layer = 4
+scales = [0, 1, 2, 4, 8, 16]
+
+# Iterate through scales, generate a new facet plot for each possible scale
+for scale in scales:
+  # Hook function which will perform flipping in the "F4 flip direction"
+  def flip_hook(resid: Float[Tensor, "batch seq d_model"], hook: HookPoint):
+    return apply_scale(resid, flip_dir, scale, move)
+
+  # Calculate the logits for the board state, with the `flip_hook` intervention (note that we only need to use :move+1
+  # as input, because of causal attention)
+  flipped_logits = model.run_with_hooks(
+    focus_games_id[game_index, : move + 1],
+    fwd_hooks=[
+      (get_act_name("resid_post", layer), flip_hook),
+    ],
+  ).log_softmax(dim=-1)[0, move]
+
+  logprobs_flipped_single = t.zeros((64,), dtype=t.float32, device=device) - 10.0
+  logprobs_flipped_single[ALL_SQUARES] = flipped_logits.log_softmax(dim=-1)[1:]
+  logprobs_flipped.append(logprobs_flipped_single)
+
+flip_state_big = t.stack(logprobs_flipped)
+logprobs_repeated = einops.repeat(logprobs.flatten(), "d -> b d", b=6)
+color = t.zeros((len(scales), 64)) + 0.2
+color[:, utils.to_square(newly_legal)] = 1
+color[:, utils.to_square(newly_illegal)] = -1
+
+scatter(
+  y=logprobs_repeated,
+  x=flip_state_big,
+  title=f"Original vs Flipped {utils.square_to_label(8 * cell_r + cell_c)} at Layer {layer}",
+  xaxis="Flipped",
+  yaxis="Original",
+  hover=[f"{r}{c}" for r in "ABCDEFGH" for c in range(8)],
+  facet_col=0,
+  facet_labels=[f"Translate by {i}x" for i in scales],
+  color=color,
+  color_name="Newly Legal",
+  color_continuous_scale="Geyser",
+  width=1400,
+)
+
+"""
+<details>
+<summary>Help - I'm still confused about this figure / this methodology</summary>
+When we mean "translating by `Nx`" for a scalar `N`,
+we mean "taking the component `x` of the residual stream
+in the `theirs - mine` probe direction for the
+F4 square, and replacing it with `Nx`.
+
+The scatter plots compare `-1x` (original)
+to `Nx` (flipped) for different values of `x`.
+For instance, the first face plot shows what happens
+when the residual stream's component in the probe
+direction is erased
+
+The fact that we see the model's prediction
+for `G4` and `D2` change (with `G4` "becoming more illegal"
+and `D2` "becoming more legal") as our scale
+factor increases (without significant change
+in the predictions for other squares, at first)
+is evidence that our causal intervention is valid.
+In other words, the direction found by our
+linear probe `my_probe` does in some sense represent
+the model's `theirs - mine` direction, and this
+direction is used by the model downstream.
+</details>
+"""
+# %%
