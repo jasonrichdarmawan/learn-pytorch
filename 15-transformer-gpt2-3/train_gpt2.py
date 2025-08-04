@@ -175,7 +175,19 @@ class GPT(nn.Module):
     if isinstance(module, nn.Linear):
       std = 0.02
       if hasattr(module, 'NANOGPT_SCALE_INIT'):
-        std += (2 * self.config.n_layer) ** -0.5
+        # if you start out with zeros in your
+        # residual stream remember that
+        # each residual stream is a is of this
+        # form where we continue adding to it
+        # X + X soemthing kind of
+        # contribution so every single block
+        # of the residual uh
+        # network contributes some uh amount
+        # and it gets added and so what
+        # ends up happening is that the
+        # variance of the activation in the
+        # residual stream grows
+        std *= (2 * self.config.n_layer) ** -0.5
         # in a block, there are 2 residual connections
         # so, the scale of the initialization should be 1/sqrt(2 * n_layer)
         # x = x + self.attn(self.ln_1(x))
