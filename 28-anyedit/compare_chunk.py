@@ -1,4 +1,25 @@
 # %%
+"""
+Add hooks to capture the intermediate values
+
+```python
+class LlamaAttention(nn.Module):
+    def forward(
+        self,
+        hidden_states: torch.Tensor,
+        position_embeddings: tuple[torch.Tensor, torch.Tensor],
+        attention_mask: Optional[torch.Tensor],
+        past_key_values: Optional[Cache] = None,
+        cache_position: Optional[torch.LongTensor] = None,
+        **kwargs: Unpack[TransformersKwargs],
+    ) -> tuple[torch.Tensor, torch.Tensor]:
+        if getattr(self, "apply_rotary_pos_emb_pre_hook", None) is not None:
+            self.apply_rotary_pos_emb_pre_hook(self, query_states, key_states, cos, sin)
+        query_states, key_states = apply_rotary_pos_emb(query_states, key_states, cos, sin)
+        if getattr(self, "apply_rotary_pos_emb_post_hook", None) is not None:
+            self.apply_rotary_pos_emb_post_hook(self, query_states, key_states)
+```
+"""
 
 USE_CUSTOM_TRANSFORMERS_LIBRARY = True
 
