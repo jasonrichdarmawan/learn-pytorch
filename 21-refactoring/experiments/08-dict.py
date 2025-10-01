@@ -31,12 +31,12 @@ class Directory:
     def __init__(self, name: str):
         self.name = name
         self.files: Dict[str, File] = {}
-        self.subdirectories: Dict[str, Dict] = {}
+        self.subdirectories: Dict[str, Directory] = {}
 
     def __repr__(self):
         return (f"Directory("
                 f"name={self.name},\n"
-                f"files={self.files}\n"
+                f"files={self.files},\n"
                 f"subdirectories={self.subdirectories})")
 
 if MAIN:
@@ -62,3 +62,5 @@ if MAIN:
     filesystem.root.subdirectories["B"] = Directory(name="B")
     filesystem.root.subdirectories["B"].files["C"] = File(name="C", size=2)
     print(filesystem)
+
+# %%
