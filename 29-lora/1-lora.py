@@ -1,10 +1,11 @@
 # %%
 
-from null_space_lora import NullSpacePeftModel
+# from null_space_lora import NullSpaceLoraConfig, NullSpacePeftModel
 
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedTokenizerBase
 
 from peft import LoraConfig, TaskType, get_peft_model, PeftModel
+from peft.tuners.nullspacelora import NullSpaceLoraConfig
 
 import torch
 from torch import nn
@@ -44,6 +45,9 @@ task_type = TaskType.CAUSAL_LM
 lr = 3e-05
 num_epochs = 100
 
+SAVE_TO_DIRECTORY = False
+SAVE_DIRECTORY = "./lora_test"
+
 # %%
 
 tokenizer = AutoTokenizer.from_pretrained(model_id)
@@ -80,16 +84,26 @@ P_map = get_dummy_P_map(target_modules, model)
 
 # %%
 
-lora_config = LoraConfig(
+# lora_config = LoraConfig(
+#     task_type=task_type,
+#     r=r,
+#     target_modules=target_modules,
+#     lora_alpha=lora_alpha,
+#     lora_dropout=lora_dropout,
+# )
+# peft_model = get_peft_model(model=model, peft_config=lora_config)
+
+lora_config = NullSpaceLoraConfig(
     task_type=task_type,
     r=r,
     target_modules=target_modules,
     lora_alpha=lora_alpha,
     lora_dropout=lora_dropout,
 )
-# peft_model = get_peft_model(model=model, peft_config=lora_config)
-# peft_model = PeftModel(model=model, peft_config=lora_config)
-peft_model = NullSpacePeftModel(model=model, peft_config=lora_config, P_map=P_map)
+peft_model = get_peft_model(model=model, peft_config=lora_config)
+peft_model.set_P_map(P_map=P_map)
+
+print(peft_model)
 peft_model.print_trainable_parameters()
 
 # %%
@@ -184,6 +198,7 @@ for epoch in range(num_epochs):
 
 # %%
 
+
 def test(model, tokenizer):
     model.eval()
     with torch.no_grad():
@@ -232,21 +247,34 @@ test(model=peft_model, tokenizer=tokenizer)
 
 # %%
 
+if SAVE_TO_DIRECTORY:
+    peft_model.save_pretrained(save_directory=SAVE_DIRECTORY)
+
+# %%
+
+peft_model = PeftModel.from_pretrained(
+    model=model,
+    model_id=SAVE_DIRECTORY,
+)
+
+# %%
+
+test(model=peft_model, tokenizer=tokenizer)
+
+# %%
+
 if PUSH_TO_HUB:
     peft_model.push_to_hub(peft_model_id)
 
 # %%
 
-model = AutoModelForCausalLM.from_pretrained(
-    peft_model_id,
-    torch_dtype=torch.bfloat16,
-    device_map="auto",
+peft_model = PeftModel.from_pretrained(
+    model=model,
+    model_id=peft_model_id,
 )
-tokenizer = AutoTokenizer.from_pretrained(model_id)
-
 
 # %%
 
-test(model=model, tokenizer=tokenizer)
+test(model=peft_model, tokenizer=tokenizer)
 
 # %%
