@@ -1,0 +1,252 @@
+# %%
+
+from null_space_lora import NullSpacePeftModel
+
+from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedTokenizerBase
+
+from peft import LoraConfig, TaskType, get_peft_model, PeftModel
+
+import torch
+from torch import nn
+from torch.nn.utils.rnn import pad_sequence
+from torch.utils.data import Dataset, DataLoader
+
+
+# %%
+
+model_id = "meta-llama/Meta-Llama-3-8B-Instruct"
+# model_id = "Qwen/Qwen2.5-7B-Instruct"
+
+peft_model_id = "jasonrichdarmawan/llama3-8b-instruct-lora-test"
+PUSH_TO_HUB = False
+
+# LoRA Config
+r = 8
+lora_alpha = 32
+lora_dropout = 0.05
+layers = [7]
+target_modules = [
+    f"model.layers.{i}.{module_name}"
+    for i in layers
+    for module_name in [
+        "self_attn.q_proj",
+        "self_attn.k_proj",
+        "self_attn.v_proj",
+        "self_attn.o_proj",
+        "mlp.gate_proj",
+        "mlp.up_proj",
+        "mlp.down_proj",
+    ]
+]
+task_type = TaskType.CAUSAL_LM
+
+# Training
+lr = 3e-05
+num_epochs = 100
+
+# %%
+
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+tokenizer.pad_token = tokenizer.eos_token
+model = AutoModelForCausalLM.from_pretrained(
+    model_id,
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
+
+# %%
+
+
+def get_dummy_P_map(target_modules, model):
+    P_map = {}
+    for name, module in model.named_modules():
+        if name in target_modules:
+            if isinstance(module, nn.Linear):
+                out_features, in_features = module.weight.shape
+                dtype = module.weight.dtype
+                device = module.weight.device
+                P = torch.eye(
+                    n=in_features, dtype=dtype, device=device
+                )  # Dummy P matrix
+                P_map[name] = P
+            else:
+                raise ValueError(
+                    f"Module {name} is not nn.Linear, please implement P for it."
+                )
+    return P_map
+
+
+P_map = get_dummy_P_map(target_modules, model)
+
+# %%
+
+lora_config = LoraConfig(
+    task_type=task_type,
+    r=r,
+    target_modules=target_modules,
+    lora_alpha=lora_alpha,
+    lora_dropout=lora_dropout,
+)
+# peft_model = get_peft_model(model=model, peft_config=lora_config)
+# peft_model = PeftModel(model=model, peft_config=lora_config)
+peft_model = NullSpacePeftModel(model=model, peft_config=lora_config, P_map=P_map)
+peft_model.print_trainable_parameters()
+
+# %%
+
+messages = [
+    {
+        "role": "system",
+        "content": "You are a pirate chatbot who always responds in pirate speak!",
+    },
+    {"role": "user", "content": "Who are you?"},
+]
+
+input_ids = tokenizer.apply_chat_template(
+    messages, add_generation_prompt=True, return_tensors="pt"
+).to(model.device)
+
+terminators = [tokenizer.eos_token_id, tokenizer.convert_tokens_to_ids("<|eot_id|>")]
+
+outputs = peft_model.generate(
+    input_ids,
+    max_new_tokens=256,
+    eos_token_id=terminators,
+    do_sample=True,
+    temperature=0.6,
+    top_p=0.9,
+)
+response = outputs[0][input_ids.shape[-1] :]
+print(tokenizer.decode(response, skip_special_tokens=True))
+
+# %%
+
+messages_list = [
+    [
+        {
+            "role": "system",
+            "content": "You are a pirate chatbot who always responds in pirate speak!",
+        },
+        {"role": "user", "content": "Who are you?"},
+        {
+            "role": "assistant",
+            "content": "I am not a pirate chatbot",
+        },
+    ],
+]
+
+
+class DummyDataset(Dataset):
+    def __init__(
+        self, tokenizer: PreTrainedTokenizerBase, messages_list: list[list[dict]]
+    ):
+        self.examples = [
+            tokenizer.apply_chat_template(
+                messages, add_generation_prompt=False, return_tensors="pt"
+            ).squeeze(0)
+            for messages in messages_list
+        ]
+
+    def __len__(self):
+        return len(self.examples)
+
+    def __getitem__(self, idx):
+        return {"input_ids": self.examples[idx], "labels": self.examples[idx].clone()}
+
+
+def collate_fn(batch):
+    input_ids = [item["input_ids"] for item in batch]
+    labels = [item["labels"] for item in batch]
+    input_ids = pad_sequence(
+        input_ids, batch_first=True, padding_value=tokenizer.pad_token_id
+    )
+    labels = pad_sequence(labels, batch_first=True, padding_value=-100)
+    return {"input_ids": input_ids, "labels": labels}
+
+
+dataset = DummyDataset(tokenizer, messages_list)
+dataloader = DataLoader(dataset, batch_size=2, shuffle=True, collate_fn=collate_fn)
+
+# %%
+
+peft_model.train()
+optimizer = torch.optim.AdamW(peft_model.parameters(), lr=lr)
+
+for epoch in range(num_epochs):
+    for batch in dataloader:
+        batch = {k: v.to(model.device) for k, v in batch.items()}
+        outputs = peft_model(**batch)
+        loss = outputs.loss
+        loss.backward()
+        optimizer.step()
+        optimizer.zero_grad()
+        print(f"{epoch=}, {loss.item()=}")
+
+# %%
+
+def test(model, tokenizer):
+    model.eval()
+    with torch.no_grad():
+        messages_list = [
+            [
+                {
+                    "role": "system",
+                    "content": "You are a pirate chatbot who always responds in pirate speak!",
+                },
+                {"role": "user", "content": "Who are you?"},
+            ],
+            [
+                {
+                    "role": "system",
+                    "content": "You are a helpful asssistant.",
+                },
+                {"role": "user", "content": "What is 2+2?"},
+            ],
+        ]
+
+        for messages in messages_list:
+            input_ids = tokenizer.apply_chat_template(
+                messages, add_generation_prompt=True, return_tensors="pt"
+            ).to(model.device)
+
+            terminators = [
+                tokenizer.eos_token_id,
+                tokenizer.convert_tokens_to_ids("<|eot_id|>"),
+            ]
+
+            outputs = model.generate(
+                input_ids,
+                max_new_tokens=256,
+                eos_token_id=terminators,
+                do_sample=True,
+                temperature=0.6,
+                top_p=0.9,
+            )
+            response = outputs[0][input_ids.shape[-1] :]
+            print(tokenizer.decode(response, skip_special_tokens=True))
+
+
+# %%
+
+test(model=peft_model, tokenizer=tokenizer)
+
+# %%
+
+if PUSH_TO_HUB:
+    peft_model.push_to_hub(peft_model_id)
+
+# %%
+
+model = AutoModelForCausalLM.from_pretrained(
+    peft_model_id,
+    torch_dtype=torch.bfloat16,
+    device_map="auto",
+)
+tokenizer = AutoTokenizer.from_pretrained(model_id)
+
+
+# %%
+
+test(model=model, tokenizer=tokenizer)
+
+# %%
