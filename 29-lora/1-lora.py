@@ -1,10 +1,8 @@
 # %%
 
-# from null_space_lora import NullSpaceLoraConfig, NullSpacePeftModel
-
 from transformers import AutoModelForCausalLM, AutoTokenizer, PreTrainedTokenizerBase
 
-from peft import LoraConfig, TaskType, get_peft_model, PeftModel
+from peft import TaskType, get_peft_model, PeftModel
 from peft.tuners.nullspacelora import NullSpaceLoraConfig
 
 import torch
@@ -42,6 +40,16 @@ target_modules = [
 task_type = TaskType.CAUSAL_LM
 
 # Training
+"""
+dtype:
+    precision `torch.bfloat16` somehow breaks the
+    symmetric property of the P matrix in
+    ```
+    x @ deltaP.T = x @ (weight_B @ weight_A @ lora_P).T * scaling
+                 = x @ lora_P.T @ weight_A.T @ weight_B.T * scaling
+    ```
+"""
+dtype = torch.float32
 lr = 3e-05
 num_epochs = 100
 
@@ -54,7 +62,7 @@ tokenizer = AutoTokenizer.from_pretrained(model_id)
 tokenizer.pad_token = tokenizer.eos_token
 model = AutoModelForCausalLM.from_pretrained(
     model_id,
-    torch_dtype=torch.bfloat16,
+    torch_dtype=dtype,
     device_map="auto",
 )
 
@@ -101,10 +109,14 @@ lora_config = NullSpaceLoraConfig(
     lora_dropout=lora_dropout,
 )
 peft_model = get_peft_model(model=model, peft_config=lora_config)
-peft_model.set_P_map(P_map=P_map)
+peft_model.set_lora_P_map(lora_P_map=P_map, adapter_name="default")
 
 print(peft_model)
 peft_model.print_trainable_parameters()
+
+# %%
+
+print([k for k in peft_model.state_dict() if "lora_P" in k])
 
 # %%
 
@@ -190,11 +202,55 @@ for epoch in range(num_epochs):
     for batch in dataloader:
         batch = {k: v.to(model.device) for k, v in batch.items()}
         outputs = peft_model(**batch)
-        loss = outputs.loss
+        regularization = sum(
+            [
+                (delta_weight.norm() ** 2)
+                for delta_weight in peft_model.get_delta_weights(
+                    adapter="default"
+                ).values()
+            ]
+        )
+        loss = outputs.loss + regularization
         loss.backward()
         optimizer.step()
         optimizer.zero_grad()
-        print(f"{epoch=}, {loss.item()=}")
+        print(f"{epoch=}, {loss.item()=}, {regularization.item()=}")
+
+# %%
+
+with torch.no_grad():
+    peft_model.eval()
+    lin = peft_model.base_model.model.model.layers[7].self_attn.q_proj
+    x = torch.randn(
+        2, lin.in_features, dtype=lin.weight.dtype, device=next(lin.parameters()).device
+    )
+    y1 = (
+        lin.base_layer(x)
+        + (lin.lora_B["default"](lin.lora_A["default"](x @ lin.lora_P["default"])))
+        * lin.scaling["default"]
+    )
+    y2 = lin(x)
+
+    deltaP = lin.get_delta_weight("default")
+
+    print(
+        f"lora_P symmetric: {torch.allclose(lin.lora_P['default'], lin.lora_P['default'].T)}"
+    )
+    print(f"lora_A bias is None: {lin.lora_A['default'].bias is None}")
+    print(f"lora_B bias is None: {lin.lora_B['default'].bias is None}")
+    print(
+        f"(y2 - (lin.base_layer(x) + x @ deltaP.T)).norm(): {(y2 - (lin.base_layer(x) + x @ deltaP.T)).norm()}"
+    )
+
+    assert torch.allclose(y1, y2, atol=1e-6)
+    # Effective additive weight is deltaP; forward adds x @ deltaP.T
+    assert torch.allclose(y2, lin.base_layer(x) + x @ deltaP.T, atol=1e-6)
+
+# %%
+
+print(
+    f"{peft_model.state_dict()['base_model.model.model.layers.7.self_attn.q_proj.lora_P.default']=}"
+)
 
 # %%
 
@@ -255,6 +311,13 @@ if SAVE_TO_DIRECTORY:
 peft_model = PeftModel.from_pretrained(
     model=model,
     model_id=SAVE_DIRECTORY,
+)
+
+# %%
+
+print([k for k in peft_model.state_dict() if "lora_P" in k])
+print(
+    f"{peft_model.state_dict()['base_model.model.model.layers.7.self_attn.q_proj.lora_P.default']=}"
 )
 
 # %%
