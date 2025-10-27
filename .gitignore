@@ -3,3 +3,5 @@ __pycache__
 wandb
 
 **/.env
+*.log
+shutdown_on_exit.sh

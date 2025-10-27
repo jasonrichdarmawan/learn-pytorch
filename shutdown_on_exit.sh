@@ -8,4 +8,4 @@ while kill -0 "$PID" 2>/dev/null; do
     sleep 120
 done
 echo "Shutting down now..."
-sudo shutdown -h now
+RUNPOD_API_KEY=$RUNPOD_API_KEY runpodctl stop pod $RUNPOD_POD_ID
